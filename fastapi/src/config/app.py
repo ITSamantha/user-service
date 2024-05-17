@@ -11,13 +11,9 @@ class AppConfig(BaseSettings):
     APP_VERSION: str
     DEBUG: bool
 
-    UVICORN_APP_NAME: str
-    UVICORN_HOST: str
-    UVICORN_PORT: int
-    UVICORN_RELOAD: bool
-
     class Config:
         env_file = "fastapi/.env"
+        env_file_encoding = 'utf-8'
 
 
 settings_app = AppConfig()
