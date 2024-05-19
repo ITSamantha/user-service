@@ -24,18 +24,6 @@ class VacationType(Base):
     title: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
 
 
-class Unit(Base):
-    __tablename__ = "units"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, nullable=False)
-    title: Mapped[str] = mapped_column(String(256), nullable=False, unique=True)
-
-    director_id: Mapped[Optional[int]] = mapped_column(ForeignKey("employees.id"), nullable=True)
-    director: Mapped[Optional["Employee"]] = relationship(uselist=False)
-
-    employees: Mapped[List["Employee"]] = relationship(uselist=True)
-
-
 class Employee(Base):
     __tablename__ = "employees"
 
@@ -51,7 +39,7 @@ class Employee(Base):
     email: Mapped[str] = mapped_column(String(128), nullable=False, unique=True)
 
     unit_id: Mapped[int] = mapped_column(ForeignKey("units.id"), nullable=False)
-    unit: Mapped["Unit"] = relationship(uselist=False)
+    unit: Mapped["Unit"] = relationship(uselist=False, foreign_keys=[unit_id], back_populates="employees")
 
     position_id: Mapped[int] = mapped_column(ForeignKey("employee_positions.id"), nullable=False)
     position: Mapped["EmployeePosition"] = relationship(uselist=False)
@@ -65,13 +53,32 @@ class Employee(Base):
     deleted_at: Mapped[Optional[datetime.datetime]] = mapped_column(nullable=True)
 
 
+class Unit(Base):
+    __tablename__ = "units"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    title: Mapped[str] = mapped_column(String(256), nullable=False, unique=True)
+
+    director_id: Mapped[Optional[int]] = mapped_column(ForeignKey("employees.id"), nullable=True)
+    director: Mapped[Optional["Employee"]] = relationship(uselist=False, foreign_keys=[director_id])
+
+    employees: Mapped[List["Employee"]] = relationship(uselist=True, foreign_keys=[Employee.unit_id])
+
+
+class VacationReason(Base):
+    __tablename__ = "vacation_reasons"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    title: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
+
+
 class Vacation(Base):
     __tablename__ = "vacations"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
     vacation_type_id: Mapped[int] = mapped_column(ForeignKey("vacation_types.id"), nullable=False)
-    vacation_type: Mapped["VacationType"] = relationship(uselist=False)
+    vacation_type: Mapped[VacationType] = relationship(uselist=False)
 
     employee_id: Mapped[int] = mapped_column(ForeignKey("employees.id"), nullable=False)
     employee: Mapped["Employee"] = relationship(uselist=False)
@@ -79,7 +86,10 @@ class Vacation(Base):
     start_date: Mapped[datetime.date] = mapped_column(nullable=False)
     end_date: Mapped[datetime.date] = mapped_column(nullable=False)
 
-    reason: Mapped[str] = mapped_column(String, nullable=False)
+    vacation_reason_id: Mapped[int] = mapped_column(ForeignKey("vacation_reasons.id"), nullable=False)
+    vacation_reason: Mapped[VacationReason] = relationship(uselist=False)
+
+    comment: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
     created_at: Mapped[datetime.datetime] = mapped_column(nullable=False, default=datetime.datetime.now())
     updated_at: Mapped[datetime.datetime] = mapped_column(nullable=False, default=datetime.datetime.now(),

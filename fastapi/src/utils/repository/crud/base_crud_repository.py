@@ -4,8 +4,7 @@ from pydantic import BaseModel
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database.models.base import Base
-
+from src.core.database.base import Base
 from src.utils.repository.base_repository import AbstractRepository
 
 ModelType = TypeVar("ModelType", bound=Base)

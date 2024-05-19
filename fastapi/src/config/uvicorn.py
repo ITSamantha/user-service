@@ -15,6 +15,7 @@ class UvicornConfig(BaseSettings):
     class Config:
         env_file = "fastapi/.env"
         env_file_encoding = 'utf-8'
+        extra = "ignore"
 
 
 settings_uvicorn = UvicornConfig()

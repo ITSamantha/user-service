@@ -25,8 +25,9 @@ class ConfigDatabase(BaseSettings):
         )
 
     class Config:
-        env_file = "../pgsql/.env"
+        env_file = ".env"
         env_file_encoding = 'utf-8'
+        extra = "ignore"
 
 
 settings_db = ConfigDatabase()
