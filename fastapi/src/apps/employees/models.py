@@ -39,13 +39,14 @@ class Employee(Base):
     email: Mapped[str] = mapped_column(String(128), nullable=False, unique=True)
 
     unit_id: Mapped[int] = mapped_column(ForeignKey("units.id"), nullable=False)
-    unit: Mapped["Unit"] = relationship(uselist=False, foreign_keys=[unit_id], back_populates="employees")
+    unit: Mapped["Unit"] = relationship(uselist=False, foreign_keys=[unit_id],
+                                        back_populates="employees", lazy="joined")
 
     position_id: Mapped[int] = mapped_column(ForeignKey("employee_positions.id"), nullable=False)
-    position: Mapped["EmployeePosition"] = relationship(uselist=False)
+    position: Mapped["EmployeePosition"] = relationship(uselist=False, lazy="subquery")
 
-    vacations: Mapped[List["Vacation"]] = relationship(uselist=True)
-    business_trips: Mapped[List["BusinessTrip"]] = relationship(uselist=True)
+    vacations: Mapped[List["Vacation"]] = relationship(uselist=True, lazy="subquery")  # TODO: CHECK
+    business_trips: Mapped[List["BusinessTrip"]] = relationship(uselist=True, lazy="subquery")  # TODO: CHECK
 
     created_at: Mapped[datetime.datetime] = mapped_column(nullable=False, default=datetime.datetime.now())
     updated_at: Mapped[datetime.datetime] = mapped_column(nullable=False, default=datetime.datetime.now(),
@@ -60,9 +61,9 @@ class Unit(Base):
     title: Mapped[str] = mapped_column(String(256), nullable=False, unique=True)
 
     director_id: Mapped[Optional[int]] = mapped_column(ForeignKey("employees.id"), nullable=True)
-    director: Mapped[Optional["Employee"]] = relationship(uselist=False, foreign_keys=[director_id])
+    director: Mapped[Optional["Employee"]] = relationship(uselist=False, foreign_keys=[director_id], lazy="joined")
 
-    employees: Mapped[List["Employee"]] = relationship(uselist=True, foreign_keys=[Employee.unit_id])
+    employees: Mapped[List["Employee"]] = relationship(uselist=True, foreign_keys=[Employee.unit_id], lazy="joined")
 
 
 class VacationReason(Base):

@@ -1,7 +1,7 @@
 import datetime
 from typing import Optional, List
 
-from pydantic import Field
+from pydantic import Field, EmailStr
 
 from src.apps.employees.schemas.business_trip import BusinessTrip
 from src.apps.employees.schemas.vacation import Vacation
@@ -9,7 +9,7 @@ from src.core.schemas.base import BaseSchemaModel
 
 
 class CreateEmployeePosition(BaseSchemaModel):
-    title: str
+    title: str = Field(max_length=256)
 
 
 class UpdateEmployeePosition(CreateEmployeePosition):
@@ -45,11 +45,11 @@ class Unit(BaseSchemaModel):
 class CreateEmployee(BaseSchemaModel):
     last_name: str = Field()
     first_name: str
-    patronymic: Optional[str]
+    patronymic: Optional[str] = None
 
     login: str
-    password: str
-    email: str
+    password: str = Field(max_length=16, min_length=8)
+    email: EmailStr
 
     unit_id: int
     position_id: int
@@ -64,17 +64,17 @@ class Employee(BaseSchemaModel):
 
     last_name: str
     first_name: str
-    patronymic: str
+    patronymic: Optional[str] = None
 
     login: str
-    email: str
+    email: EmailStr
 
     unit: Unit
 
     position: EmployeePosition
 
-    vacations: List[Vacation]
-    business_trips: List[BusinessTrip]
+    vacations: Optional[List[Vacation]] = None
+    business_trips: Optional[List[BusinessTrip]] = None
 
     created_at: datetime.datetime
     updated_at: datetime.datetime

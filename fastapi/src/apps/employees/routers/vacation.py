@@ -1,8 +1,9 @@
 from typing import List
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from src.apps.employees import models
+from src.apps.employees.dependencies import valid_vacation_id, valid_vacation_reason_id
 from src.apps.employees.schemas.vacation import Vacation, VacationType, VacationReason, CreateVacationType, \
     CreateVacationReason, CreateVacation
 from src.core.database.session_manager import db_manager
@@ -45,6 +46,14 @@ async def get_vacation_reasons():
     return vacation_reasons
 
 
+@router.get(path="/reasons/{vacation_reason_id}", response_model=VacationReason)
+@api_handler
+async def get_vacation_reason_by_id(vacation_reason: Vacation = Depends(valid_vacation_reason_id)):
+    """Returns employee position with employee_position_id."""
+
+    return vacation_reason
+
+
 @router.post(path="/reasons", response_model=VacationReason)
 @api_handler
 async def create_vacation_reason(data: CreateVacationReason):
@@ -63,6 +72,14 @@ async def get_vacations():
     vacations: List[models.Vacation] = await SqlAlchemyRepository(db_manager.get_session,
                                                                   model=models.Vacation).get_multi()
     return vacations
+
+
+@router.get(path="/{vacation_id}", response_model=Vacation)
+@api_handler
+async def get_vacation_by_id(vacation: Vacation = Depends(valid_vacation_id)):
+    """Returns employee position with employee_position_id."""
+
+    return vacation
 
 
 @router.post(path="", response_model=Vacation)
