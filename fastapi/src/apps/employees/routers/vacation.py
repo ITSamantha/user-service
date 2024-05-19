@@ -4,7 +4,7 @@ from fastapi import APIRouter
 
 from src.apps.employees import models
 from src.apps.employees.schemas.vacation import Vacation, VacationType, VacationReason, CreateVacationType, \
-    CreateVacationReason
+    CreateVacationReason, CreateVacation
 from src.core.database.session_manager import db_manager
 from src.utils.handlers import api_handler
 from src.utils.repository.crud.base_crud_repository import SqlAlchemyRepository
@@ -63,3 +63,13 @@ async def get_vacations():
     vacations: List[models.Vacation] = await SqlAlchemyRepository(db_manager.get_session,
                                                                   model=models.Vacation).get_multi()
     return vacations
+
+
+@router.post(path="", response_model=Vacation)
+@api_handler
+async def create_vacation(data: CreateVacation):
+    """Returns created with the given data vacation."""
+
+    vacation: models.Vacation = await SqlAlchemyRepository(db_manager.get_session,
+                                                           model=models.Vacation).create(data)
+    return vacation
