@@ -79,16 +79,16 @@ class Vacation(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
     vacation_type_id: Mapped[int] = mapped_column(ForeignKey("vacation_types.id"), nullable=False)
-    vacation_type: Mapped[VacationType] = relationship(uselist=False)
+    vacation_type: Mapped[VacationType] = relationship(uselist=False, lazy="joined")
 
     employee_id: Mapped[int] = mapped_column(ForeignKey("employees.id"), nullable=False)
-    employee: Mapped["Employee"] = relationship(uselist=False)
+    employee: Mapped["Employee"] = relationship(uselist=False, lazy="joined")
 
     start_date: Mapped[datetime.date] = mapped_column(nullable=False)
     end_date: Mapped[datetime.date] = mapped_column(nullable=False)
 
     vacation_reason_id: Mapped[int] = mapped_column(ForeignKey("vacation_reasons.id"), nullable=False)
-    vacation_reason: Mapped[VacationReason] = relationship(uselist=False)
+    vacation_reason: Mapped[VacationReason] = relationship(uselist=False, lazy="joined")
 
     comment: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
@@ -108,7 +108,7 @@ class BusinessTrip(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
     employee_id: Mapped[int] = mapped_column(ForeignKey("employees.id"), nullable=False)
-    employee: Mapped["Employee"] = relationship(uselist=False)
+    employee: Mapped["Employee"] = relationship(uselist=False, lazy="joined")
 
     start_date: Mapped[datetime.date] = mapped_column(nullable=False)
     end_date: Mapped[datetime.date] = mapped_column(nullable=False)

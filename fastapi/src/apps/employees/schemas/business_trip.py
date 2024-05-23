@@ -1,7 +1,7 @@
 import datetime
 from typing import Optional
 
-from src.core.schemas.base import BaseSchemaModel
+from src.core.schemas.base import BaseSchemaModel, BaseResponseSchemaModel
 
 
 class CreateBusinessTrip(BaseSchemaModel):
@@ -19,10 +19,8 @@ class UpdateBusinessTrip(BaseSchemaModel):
     pass
 
 
-class BusinessTrip(BaseSchemaModel):
+class BusinessTrip(BaseResponseSchemaModel):
     id: int
-
-    # employee: "Employee"
 
     start_date: datetime.date
     end_date: datetime.date

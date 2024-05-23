@@ -1,7 +1,7 @@
 import datetime
 from typing import Optional
 
-from src.core.schemas.base import BaseSchemaModel
+from src.core.schemas.base import BaseSchemaModel, BaseResponseSchemaModel
 
 
 class CreateVacationReason(BaseSchemaModel):
@@ -38,23 +38,26 @@ class CreateVacation(BaseSchemaModel):
     start_date: datetime.date
     end_date: datetime.date
 
-    reason: str
+    comment: Optional[str]
+
+    vacation_reason_id: int
 
 
 class UpdateVacation(BaseSchemaModel):
     pass
 
 
-class Vacation(BaseSchemaModel):
+class Vacation(BaseResponseSchemaModel):
     id: int
 
-    vacation_type: VacationType
+    # vacation_type: VacationType
     # employee: "Employee"
+    # vacation_reason: VacationReason
 
     start_date: datetime.date
     end_date: datetime.date
 
-    vacation_reason: VacationReason
+    comment: Optional[str]
 
     created_at: datetime.datetime
     updated_at: datetime.datetime

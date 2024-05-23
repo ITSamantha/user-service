@@ -26,3 +26,8 @@ async def valid_unit_id(unit_id: int) -> models.Unit:
 @api_handler
 async def valid_employee_position_id(employee_position_id: int) -> models.EmployeePosition:
     return await valid_id(employee_position_id, models.EmployeePosition, "Employee position")
+
+
+@api_handler
+async def valid_business_trip_id(business_trip_id: int) -> models.BusinessTrip:
+    return await valid_id(business_trip_id, models.BusinessTrip, "Business trip")

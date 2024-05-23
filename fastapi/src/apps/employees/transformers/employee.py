@@ -1,4 +1,6 @@
 from src.apps.employees.schemas.employee import EmployeePosition, Unit, Employee
+from src.apps.employees.transformers.business_trip import BusinessTripTransformer
+from src.apps.employees.transformers.vacation import VacationTransformer
 from src.utils.transformer import BaseTransformer
 from src.apps.employees import models
 
@@ -47,13 +49,11 @@ class EmployeeTransformer(BaseTransformer):
     def include_position(self, employee: models.Employee):
         return self.item(employee.position, EmployeePositionTransformer())
 
-    """
     def include_vacations(self, employee):
         return self.collection(employee.vacations, VacationTransformer())
-    
+
     def include_business_trips(self, employee):
         return self.collection(employee.business_trips, BusinessTripTransformer())
-    """
 
 
 class UnitTransformer(BaseTransformer):

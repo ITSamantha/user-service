@@ -1,11 +1,9 @@
 import datetime
-from typing import Optional, List
+from typing import Optional
 
-from pydantic import Field, EmailStr, PrivateAttr
+from pydantic import Field, EmailStr
 
-from src.apps.employees.schemas.business_trip import BusinessTrip
-from src.apps.employees.schemas.vacation import Vacation
-from src.core.schemas.base import BaseSchemaModel
+from src.core.schemas.base import BaseSchemaModel, BaseResponseSchemaModel
 
 
 class CreateEmployeePosition(BaseSchemaModel):
@@ -16,7 +14,7 @@ class UpdateEmployeePosition(CreateEmployeePosition):
     pass
 
 
-class EmployeePosition(BaseSchemaModel):
+class EmployeePosition(BaseResponseSchemaModel):
     id: int
     title: str
 
@@ -33,12 +31,11 @@ class UpdateUnit(BaseSchemaModel):
     director_id: Optional[int] = None
 
 
-class Unit(BaseSchemaModel):
+class Unit(BaseResponseSchemaModel):
     id: int
     title: str
 
     # director: Optional["Employee"] = Field( default=None)
-
     # employees: Optional[List["Employee"]] = Field(exclude=True, default=None)
 
 
@@ -59,7 +56,7 @@ class UpdateEmployee(BaseSchemaModel):
     pass
 
 
-class Employee(BaseSchemaModel):
+class Employee(BaseResponseSchemaModel):
     id: int
 
     last_name: str
