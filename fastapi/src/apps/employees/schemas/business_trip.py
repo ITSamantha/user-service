@@ -22,7 +22,7 @@ class UpdateBusinessTrip(BaseSchemaModel):
 class BusinessTrip(BaseSchemaModel):
     id: int
 
-    employee: "Employee"
+    # employee: "Employee"
 
     start_date: datetime.date
     end_date: datetime.date

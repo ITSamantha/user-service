@@ -7,9 +7,11 @@ from src.apps.employees.dependencies import valid_employee_position_id, valid_em
 
 from src.apps.employees.schemas.employee import CreateEmployee, CreateEmployeePosition, EmployeePosition, Employee, \
     Unit, CreateUnit
+from src.apps.employees.transformers.employee import EmployeePositionTransformer, UnitTransformer
 from src.core.database.session_manager import db_manager
 from src.utils.handlers import api_handler
 from src.utils.repository.crud.base_crud_repository import SqlAlchemyRepository
+from src.utils.transformer import transform
 
 router: APIRouter = APIRouter(
     prefix="",
@@ -24,7 +26,7 @@ async def get_employee_positions():
 
     employee_positions: List[models.EmployeePosition] = await SqlAlchemyRepository(db_manager.get_session,
                                                                                    model=models.EmployeePosition).get_multi()
-    return employee_positions
+    return transform(employee_positions, EmployeePositionTransformer())
 
 
 @router.get(path="/employee_positions/{employee_position_id}", response_model=EmployeePosition)
@@ -32,7 +34,7 @@ async def get_employee_positions():
 async def get_employee_position_by_id(employee_position: EmployeePosition = Depends(valid_employee_position_id)):
     """Returns employee position with employee_position_id."""
 
-    return employee_position
+    return transform(employee_position, EmployeePositionTransformer())
 
 
 @router.post(path="/employee_positions", response_model=EmployeePosition)
@@ -42,7 +44,7 @@ async def create_employee_position(data: CreateEmployeePosition):
 
     employee_position: models.EmployeePosition = await SqlAlchemyRepository(db_manager.get_session,
                                                                             model=models.EmployeePosition).create(data)
-    return employee_position
+    return transform(employee_position, EmployeePositionTransformer())
 
 
 @router.get(path="/units", response_model=List[Unit])
@@ -52,7 +54,8 @@ async def get_units():
 
     units: List[models.Unit] = await SqlAlchemyRepository(db_manager.get_session,
                                                           model=models.Unit).get_multi(unique=True)
-    return units
+    return transform(units,
+                     UnitTransformer().include(["director", "employees"]))
 
 
 @router.get(path="/units/{unit_id}", response_model=Unit)
@@ -60,7 +63,7 @@ async def get_units():
 async def get_unit_by_id(unit: Unit = Depends(valid_unit_id)):
     """Returns unit with unit_id."""
 
-    return unit
+    return transform(unit, UnitTransformer().include(["director", "employees"]))
 
 
 @router.post(path="/units", response_model=Unit)
@@ -70,7 +73,7 @@ async def create_unit(data: CreateUnit):
 
     unit: models.Unit = await SqlAlchemyRepository(db_manager.get_session,
                                                    model=models.Unit).create(data)
-    return unit
+    return transform(unit, UnitTransformer())
 
 
 @router.get(path="/", response_model=List[Employee])

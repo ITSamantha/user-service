@@ -49,7 +49,7 @@ class Vacation(BaseSchemaModel):
     id: int
 
     vacation_type: VacationType
-    employee: "Employee"
+    # employee: "Employee"
 
     start_date: datetime.date
     end_date: datetime.date
