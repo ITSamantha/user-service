@@ -38,8 +38,9 @@ class SqlAlchemyRepository(AbstractRepository, Generic[ModelType, CreateSchemaTy
 
     async def update(self, data: UpdateSchemaType, exclude_none=True, exclude_unset=True, **filters) -> ModelType:
         async with self._session_factory() as session:
+            instance_data = data.model_dump(exclude_unset=exclude_unset, exclude_defaults=True)
             stmt = update(self.model).values(
-                **data.model_dump(exclude_none=exclude_none, exclude_unset=exclude_unset)).filter_by(
+                **instance_data).filter_by(
                 **filters).returning(
                 self.model)
             res = await session.execute(stmt)

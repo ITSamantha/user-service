@@ -56,6 +56,14 @@ class UpdateEmployee(BaseSchemaModel):
     pass
 
 
+class SearchEmployee(BaseSchemaModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    patronymic: Optional[str] = None
+    email: Optional[EmailStr] = None
+    login: Optional[str] = None
+
+
 class Employee(BaseResponseSchemaModel):
     id: int
 
@@ -66,12 +74,12 @@ class Employee(BaseResponseSchemaModel):
     login: str
     email: EmailStr
 
-    #unit: Optional[Unit]
+    # unit: Optional[Unit]
 
-    #position: Optional[EmployeePosition]
+    # position: Optional[EmployeePosition]
 
-    #vacations: Optional[List[Vacation]]
-    #business_trips: Optional[List[BusinessTrip]]
+    # vacations: Optional[List[Vacation]]
+    # business_trips: Optional[List[BusinessTrip]]
 
     created_at: datetime.datetime
     updated_at: datetime.datetime

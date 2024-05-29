@@ -14,6 +14,11 @@ async def valid_vacation_reason_id(vacation_reason_id: int) -> models.VacationRe
 
 
 @api_handler
+async def valid_vacation_type_id(vacation_type_id: int) -> models.VacationType:
+    return await valid_id(vacation_type_id, models.VacationReason, "Vacation type")
+
+
+@api_handler
 async def valid_employee_id(employee_id: int) -> models.Employee:
     return await valid_id(employee_id, models.Employee, "Employee")
 

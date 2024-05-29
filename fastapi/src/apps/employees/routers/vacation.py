@@ -1,11 +1,11 @@
-from typing import List
+from typing import List, Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 from src.apps.employees import models
-from src.apps.employees.dependencies import valid_vacation_id, valid_vacation_reason_id
+from src.apps.employees.dependencies import valid_vacation_id, valid_vacation_reason_id, valid_vacation_type_id
 from src.apps.employees.schemas.vacation import Vacation, VacationType, VacationReason, CreateVacationType, \
-    CreateVacationReason, CreateVacation
+    CreateVacationReason, CreateVacation, UpdateVacationType, UpdateVacationReason, UpdateVacation
 from src.apps.employees.transformers.vacation import VacationTypeTransformer, VacationReasonTransformer, \
     VacationTransformer
 from src.core.database.session_manager import db_manager
@@ -18,8 +18,10 @@ router: APIRouter = APIRouter(
     tags=["vacations"],
 )
 
+""" VACATION TYPE """
 
-@router.get(path="/types", response_model=List[VacationType])
+
+@router.get(path="/types", response_model=List[VacationType], tags=["vacation_types"])
 @api_handler
 async def get_vacation_types():
     """Returns the list of vacation types."""
@@ -29,17 +31,40 @@ async def get_vacation_types():
     return transform(vacation_types, VacationTypeTransformer())
 
 
-@router.post(path="/types", response_model=VacationType)
+@router.get(path="/types/{vacation_type_id}", response_model=VacationType, tags=["vacation_types"])
+@api_handler
+async def get_vacation_type_by_id(vacation_type: models.VacationType = Depends(valid_vacation_type_id)):
+    """Returns vacation type with id=vacation_type_id."""
+
+    return transform(vacation_type, VacationTypeTransformer())
+
+
+@router.post(path="/types", response_model=VacationType, tags=["vacation_types"])
 @api_handler
 async def create_vacation_type(data: CreateVacationType):
     """Returns created with the given data vacation type."""
 
     vacation_type: models.VacationType = await SqlAlchemyRepository(db_manager.get_session,
-                                                                    model=models.VacationType).create(data)
+                                                                    model=models.VacationType).create(data=data)
     return transform(vacation_type, VacationTypeTransformer())
 
 
-@router.get(path="/reasons", response_model=List[VacationReason])
+@router.patch(path="/types/{vacation_type_id}", response_model=VacationType, tags=["vacation_types"])
+@api_handler
+async def update_vacation_type_by_id(data: UpdateVacationType,
+                                     vacation_type: models.VacationType = Depends(valid_vacation_type_id)):
+    """Returns updated with given data vacation type."""
+
+    vacation_type: models.VacationType = await SqlAlchemyRepository(db_manager.get_session,
+                                                                    model=models.VacationType).update(data=data,
+                                                                                                      id=vacation_type.id)
+    return transform(vacation_type, VacationTypeTransformer())
+
+
+""" VACATION REASON """
+
+
+@router.get(path="/reasons", response_model=List[VacationReason], tags=["vacation_reasons"])
 @api_handler
 async def get_vacation_reasons():
     """Returns the list of vacation reasons."""
@@ -49,25 +74,40 @@ async def get_vacation_reasons():
     return transform(vacation_reasons, VacationReasonTransformer())
 
 
-@router.get(path="/reasons/{vacation_reason_id}", response_model=VacationReason)
+@router.get(path="/reasons/{vacation_reason_id}", response_model=VacationReason, tags=["vacation_reasons"])
 @api_handler
 async def get_vacation_reason_by_id(vacation_reason: Vacation = Depends(valid_vacation_reason_id)):
-    """Returns employee position with employee_position_id."""
+    """Returns vacation reason with id=vacation_reason_id."""
 
     return transform(vacation_reason, VacationReasonTransformer())
 
 
-@router.post(path="/reasons", response_model=VacationReason)
+@router.patch(path="/reasons/{vacation_reason_id}", response_model=VacationReason, tags=["vacation_reasons"])
+@api_handler
+async def update_vacation_reason_by_id(data: UpdateVacationReason,
+                                       vacation_reason: models.VacationReason = Depends(valid_vacation_reason_id)):
+    """Returns updated with given data vacation reason."""
+
+    vacation_reason: models.VacationReason = await SqlAlchemyRepository(db_manager.get_session,
+                                                                        model=models.VacationReason).update(data=data,
+                                                                                                            id=vacation_reason.id)
+    return transform(vacation_reason, VacationReasonTransformer())
+
+
+@router.post(path="/reasons", response_model=VacationReason, tags=["vacation_reasons"])
 @api_handler
 async def create_vacation_reason(data: CreateVacationReason):
     """Returns created with the given data vacation reason."""
 
     vacation_reason: models.VacationReason = await SqlAlchemyRepository(db_manager.get_session,
-                                                                        model=models.VacationReason).create(data)
+                                                                        model=models.VacationReason).create(data=data)
     return transform(vacation_reason, VacationReasonTransformer())
 
 
-@router.get(path="", response_model=List[Vacation])
+""" VACATION """
+
+
+@router.get(path="", response_model=List[Vacation], tags=["vacation"])
 @api_handler
 async def get_vacations():
     """Returns the list of vacations."""
@@ -77,19 +117,33 @@ async def get_vacations():
     return transform(vacations, VacationTransformer().include(["employee", "vacation_type", "vacation_reason"]))
 
 
-@router.get(path="/{vacation_id}", response_model=Vacation)
+@router.get(path="/{vacation_id}", response_model=Vacation, tags=["vacation"])
 @api_handler
 async def get_vacation_by_id(vacation: Vacation = Depends(valid_vacation_id)):
-    """Returns employee position with employee_position_id."""
+    """Returns vacation with vacation_id."""
 
     return transform(vacation, VacationTransformer().include(["employee", "vacation_type", "vacation_reason"]))
 
 
-@router.post(path="", response_model=Vacation)
+# TODO: ДИАНА ДОДЕЛАТЬ
+@router.patch(path="/{vacation_id}", response_model=Vacation, tags=["vacation"])
+@api_handler
+async def update_vacation_by_id(data: UpdateVacation, vacation: models.Vacation = Depends(valid_vacation_id)):
+    """Returns updated with given data vacation."""
+
+    vacation: models.Vacation = await SqlAlchemyRepository(db_manager.get_session,
+                                                           model=models.Vacation).update(data=data,
+                                                                                         exclude_unset=True,
+                                                                                         exclude_none=False,
+                                                                                         id=vacation.id)
+    return transform(vacation, VacationTransformer().include(["vacation_type", "vacation_reason"]))
+
+
+@router.post(path="", response_model=Vacation, tags=["vacation"])
 @api_handler
 async def create_vacation(data: CreateVacation):
     """Returns created with the given data vacation."""
 
     vacation: models.Vacation = await SqlAlchemyRepository(db_manager.get_session,
-                                                           model=models.Vacation).create(data)
+                                                           model=models.Vacation).create(data=data)
     return transform(vacation, VacationTransformer().include(["vacation_type", "vacation_reason"]))

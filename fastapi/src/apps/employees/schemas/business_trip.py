@@ -14,6 +14,8 @@ class CreateBusinessTrip(BaseSchemaModel):
 
     destination: str
 
+    comment: Optional[str] = None
+
 
 class UpdateBusinessTrip(BaseSchemaModel):
     pass
@@ -27,6 +29,8 @@ class BusinessTrip(BaseResponseSchemaModel):
 
     purpose: str
     destination: str
+
+    comment: Optional[str] = None
 
     created_at: datetime.datetime
     updated_at: datetime.datetime

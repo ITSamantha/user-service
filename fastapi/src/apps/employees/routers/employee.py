@@ -7,7 +7,7 @@ from src.apps.employees.dependencies import valid_employee_position_id, valid_em
 from src.apps.employees.schemas.business_trip import BusinessTrip
 
 from src.apps.employees.schemas.employee import CreateEmployee, CreateEmployeePosition, EmployeePosition, Employee, \
-    Unit, CreateUnit
+    Unit, CreateUnit, SearchEmployee, UpdateEmployeePosition
 from src.apps.employees.schemas.vacation import Vacation
 from src.apps.employees.transformers.business_trip import BusinessTripTransformer
 from src.apps.employees.transformers.employee import EmployeePositionTransformer, UnitTransformer, EmployeeTransformer
@@ -22,8 +22,10 @@ router: APIRouter = APIRouter(
     tags=["employees"],
 )
 
+""" EMPLOYEE POSITION """
 
-@router.get(path="/employee_positions", response_model=List[EmployeePosition])
+
+@router.get(path="/positions", response_model=List[EmployeePosition], tags=["employee_positions"])
 @api_handler
 async def get_employee_positions():
     """Returns the list of employee positions."""
@@ -33,15 +35,15 @@ async def get_employee_positions():
     return transform(employee_positions, EmployeePositionTransformer())
 
 
-@router.get(path="/employee_positions/{employee_position_id}", response_model=EmployeePosition)
+@router.get(path="/positions/{employee_position_id}", response_model=EmployeePosition, tags=["employee_positions"])
 @api_handler
 async def get_employee_position_by_id(employee_position: EmployeePosition = Depends(valid_employee_position_id)):
-    """Returns employee position with employee_position_id."""
+    """Returns employee position with id=employee_position_id."""
 
     return transform(employee_position, EmployeePositionTransformer())
 
 
-@router.post(path="/employee_positions", response_model=EmployeePosition)
+@router.post(path="/positions", response_model=EmployeePosition, tags=["employee_positions"])
 @api_handler
 async def create_employee_position(data: CreateEmployeePosition):
     """Returns created with the given data employee position."""
@@ -51,7 +53,24 @@ async def create_employee_position(data: CreateEmployeePosition):
     return transform(employee_position, EmployeePositionTransformer())
 
 
-@router.get(path="/units", response_model=List[Unit])
+@router.patch(path="/positions/{employee_position_id}", response_model=EmployeePosition, tags=["employee_positions"])
+@api_handler
+async def update_employee_position_by_id(data: UpdateEmployeePosition,
+                                         employee_position: models.EmployeePosition = Depends(
+                                             valid_employee_position_id)):
+    """Returns updated with given data employee position."""
+
+    employee_position: models.EmployeePosition = await SqlAlchemyRepository(db_manager.get_session,
+                                                                            model=models.EmployeePosition).update(
+        data=data,
+        id=employee_position.id)
+    return transform(employee_position, EmployeePositionTransformer())
+
+
+""" UNIT """
+
+
+@router.get(path="/units", response_model=List[Unit], tags=["units"])
 @api_handler
 async def get_units():
     """Returns the list of units."""
@@ -62,15 +81,15 @@ async def get_units():
                      UnitTransformer().include(["director", "employees"]))
 
 
-@router.get(path="/units/{unit_id}", response_model=Unit)
+@router.get(path="/units/{unit_id}", response_model=Unit, tags=["units"])
 @api_handler
 async def get_unit_by_id(unit: Unit = Depends(valid_unit_id)):
-    """Returns unit with unit_id."""
+    """Returns unit with id=unit_id."""
 
     return transform(unit, UnitTransformer().include(["director", "employees"]))
 
 
-@router.post(path="/units", response_model=Unit)
+@router.post(path="/units", response_model=Unit, tags=["units"])
 @api_handler
 async def create_unit(data: CreateUnit):
     """Returns created with the given data unit."""
@@ -80,11 +99,38 @@ async def create_unit(data: CreateUnit):
     return transform(unit, UnitTransformer())
 
 
+@router.patch(path="/units/{unit_id}", response_model=Unit, tags=["units"])
+@api_handler
+async def update_employee_position_by_id(data: UpdateEmployeePosition,
+                                         employee_position: models.EmployeePosition = Depends(
+                                             valid_employee_position_id)):
+    """Returns updated with given data employee position."""
+
+    employee_position: models.EmployeePosition = await SqlAlchemyRepository(db_manager.get_session,
+                                                                            model=models.EmployeePosition).update(
+        data=data,
+        id=employee_position.id)
+    return transform(employee_position, EmployeePositionTransformer())
+
+
+""" EMPLOYEE """
+
+
 @router.get(path="/", response_model=List[Employee])
 @api_handler
 async def get_employees():
     """Returns the list of employees."""
 
+    employees: List[models.Employee] = await SqlAlchemyRepository(db_manager.get_session,
+                                                                  model=models.Employee).get_multi(unique=True)
+    return transform(employees, EmployeeTransformer().include(["unit"]))
+
+
+@router.get(path="/search", response_model=List[Employee])
+@api_handler
+async def search_employees(data: SearchEmployee):
+    """Returns the list of employees."""
+    info = data.model_dump(exclude_unset=True)
     employees: List[models.Employee] = await SqlAlchemyRepository(db_manager.get_session,
                                                                   model=models.Employee).get_multi(unique=True)
     return transform(employees, EmployeeTransformer().include(["unit"]))
@@ -119,7 +165,7 @@ async def get_employee_business_trips(employee_id: int):
 
 @router.get(path="/{employee_id}/vacations", response_model=List[Vacation])
 @api_handler
-async def get_employee_business_trips(employee_id: int):
+async def get_employee_vacations(employee_id: int):
     vacations: List[models.Vacation] = await SqlAlchemyRepository(db_manager.get_session,
                                                                   model=models.Vacation).get_multi(
         unique=True, employee_id=employee_id)

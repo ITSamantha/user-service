@@ -117,6 +117,8 @@ class BusinessTrip(Base):
 
     destination: Mapped[str] = mapped_column(String, nullable=False)
 
+    comment: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+
     created_at: Mapped[datetime.datetime] = mapped_column(nullable=False, default=datetime.datetime.now())
     updated_at: Mapped[datetime.datetime] = mapped_column(nullable=False, default=datetime.datetime.now(),
                                                           onupdate=datetime.datetime.now())

@@ -1,5 +1,7 @@
 import datetime
-from typing import Optional
+from typing import Optional, Annotated
+
+from pydantic import Field
 
 from src.core.schemas.base import BaseSchemaModel, BaseResponseSchemaModel
 
@@ -38,13 +40,22 @@ class CreateVacation(BaseSchemaModel):
     start_date: datetime.date
     end_date: datetime.date
 
-    comment: Optional[str]
+    comment: Optional[str] = None
 
     vacation_reason_id: int
 
 
 class UpdateVacation(BaseSchemaModel):
-    pass
+    vacation_type_id: Optional[int]
+
+    employee_id: Optional[int]
+
+    start_date: Optional[datetime.date]
+    end_date: Optional[datetime.date]
+
+    comment: Optional[str]
+
+    vacation_reason_id: Optional[int]
 
 
 class Vacation(BaseResponseSchemaModel):
