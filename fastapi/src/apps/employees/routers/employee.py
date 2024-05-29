@@ -7,7 +7,7 @@ from src.apps.employees.dependencies import valid_employee_position_id, valid_em
 from src.apps.employees.schemas.business_trip import BusinessTrip
 
 from src.apps.employees.schemas.employee import CreateEmployee, CreateEmployeePosition, EmployeePosition, Employee, \
-    Unit, CreateUnit, SearchEmployee, UpdateEmployeePosition
+    Unit, CreateUnit, SearchEmployee, UpdateEmployeePosition, UpdateUnit, UpdateEmployee
 from src.apps.employees.schemas.vacation import Vacation
 from src.apps.employees.transformers.business_trip import BusinessTripTransformer
 from src.apps.employees.transformers.employee import EmployeePositionTransformer, UnitTransformer, EmployeeTransformer
@@ -101,22 +101,21 @@ async def create_unit(data: CreateUnit):
 
 @router.patch(path="/units/{unit_id}", response_model=Unit, tags=["units"])
 @api_handler
-async def update_employee_position_by_id(data: UpdateEmployeePosition,
-                                         employee_position: models.EmployeePosition = Depends(
-                                             valid_employee_position_id)):
-    """Returns updated with given data employee position."""
+async def update_unit_by_id(data: UpdateUnit,
+                            unit: models.Unit = Depends(valid_unit_id)):
+    """Returns updated with given data unit."""
 
-    employee_position: models.EmployeePosition = await SqlAlchemyRepository(db_manager.get_session,
-                                                                            model=models.EmployeePosition).update(
+    unit: models.Unit = await SqlAlchemyRepository(db_manager.get_session,
+                                                   model=models.Unit).update(
         data=data,
-        id=employee_position.id)
-    return transform(employee_position, EmployeePositionTransformer())
+        id=unit.id)
+    return transform(unit, UnitTransformer())
 
 
 """ EMPLOYEE """
 
 
-@router.get(path="/", response_model=List[Employee])
+@router.get(path="/", response_model=List[Employee], tags=["employees"])
 @api_handler
 async def get_employees():
     """Returns the list of employees."""
@@ -126,7 +125,7 @@ async def get_employees():
     return transform(employees, EmployeeTransformer().include(["unit"]))
 
 
-@router.get(path="/search", response_model=List[Employee])
+@router.get(path="/search", response_model=List[Employee], tags=["employees"])
 @api_handler
 async def search_employees(data: SearchEmployee):
     """Returns the list of employees."""
@@ -136,7 +135,7 @@ async def search_employees(data: SearchEmployee):
     return transform(employees, EmployeeTransformer().include(["unit"]))
 
 
-@router.get(path="/{employee_id}", response_model=Employee)
+@router.get(path="/{employee_id}", response_model=Employee, tags=["employees"])
 @api_handler
 async def get_employee_by_id(employee: Employee = Depends(valid_employee_id)):
     """Returns employee with employee_id."""
@@ -144,7 +143,7 @@ async def get_employee_by_id(employee: Employee = Depends(valid_employee_id)):
     return transform(employee, EmployeeTransformer().include(["unit", "vacations", "business_trips"]))
 
 
-@router.post(path="/", response_model=Employee)
+@router.post(path="/", response_model=Employee, tags=["employees"])
 @api_handler
 async def create_employee(data: CreateEmployee):
     """Returns created with the given data employee."""
@@ -154,7 +153,20 @@ async def create_employee(data: CreateEmployee):
     return transform(employee, EmployeeTransformer())
 
 
-@router.get(path="/{employee_id}/business_trips", response_model=List[BusinessTrip])
+@router.patch(path="/{employee_id}", response_model=Employee, tags=["employees"])
+@api_handler
+async def update_employee_by_id(data: UpdateEmployee,
+                                employee: models.Employee = Depends(valid_employee_id)):
+    """Returns updated with given data employee."""
+
+    employee: models.Employee = await SqlAlchemyRepository(db_manager.get_session,
+                                                           model=models.Employee).update(
+        data=data,
+        id=employee.id)
+    return transform(employee, EmployeeTransformer())
+
+
+@router.get(path="/{employee_id}/business_trips", response_model=List[BusinessTrip], tags=["employees"])
 @api_handler
 async def get_employee_business_trips(employee_id: int):
     business_trips: List[models.BusinessTrip] = await SqlAlchemyRepository(db_manager.get_session,
@@ -163,7 +175,7 @@ async def get_employee_business_trips(employee_id: int):
     return transform(business_trips, BusinessTripTransformer())
 
 
-@router.get(path="/{employee_id}/vacations", response_model=List[Vacation])
+@router.get(path="/{employee_id}/vacations", response_model=List[Vacation], tags=["employees"])
 @api_handler
 async def get_employee_vacations(employee_id: int):
     vacations: List[models.Vacation] = await SqlAlchemyRepository(db_manager.get_session,
