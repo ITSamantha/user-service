@@ -1,5 +1,7 @@
 from src.apps.employees import models
-from src.core.dependencies import valid_id
+from src.apps.employees.schemas.business_trip import CreateBusinessTrip
+from src.apps.employees.schemas.vacation import CreateVacation
+from src.core.dependencies import valid_id, valid_dates
 from src.utils.handlers import api_handler
 
 
@@ -36,3 +38,13 @@ async def valid_employee_position_id(employee_position_id: int) -> models.Employ
 @api_handler
 async def valid_business_trip_id(business_trip_id: int) -> models.BusinessTrip:
     return await valid_id(business_trip_id, models.BusinessTrip, "Business trip")
+
+
+@api_handler
+async def valid_employee_business_trip(data: CreateBusinessTrip):
+    return await valid_dates(data)
+
+
+@api_handler
+async def valid_employee_vacation(data: CreateVacation):
+    return await valid_dates(data)

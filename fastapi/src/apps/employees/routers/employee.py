@@ -1,6 +1,7 @@
 from typing import List, Union
 
 from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.apps.employees import models
 from src.apps.employees.dependencies import valid_employee_position_id, valid_employee_id, valid_unit_id
@@ -25,6 +26,7 @@ router: APIRouter = APIRouter(
 """ EMPLOYEE POSITION """
 
 
+# TODO: ДИАНА УБЕРИ ИЛИ РАЗБЕРИСЬ
 @router.get(path="/positions", response_model=List[EmployeePosition], tags=["employee_positions"])
 @api_handler
 async def get_employee_positions():

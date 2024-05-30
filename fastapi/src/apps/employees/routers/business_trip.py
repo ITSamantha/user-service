@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 
 from src.apps.employees import models
-from src.apps.employees.dependencies import valid_business_trip_id
+from src.apps.employees.dependencies import valid_business_trip_id, valid_employee_business_trip
 from src.apps.employees.schemas.business_trip import BusinessTrip, CreateBusinessTrip, UpdateBusinessTrip
 from src.apps.employees.transformers.business_trip import BusinessTripTransformer
 from src.core.database.session_manager import db_manager
@@ -40,7 +40,7 @@ async def get_business_trip(business_trip: BusinessTrip = Depends(valid_business
 
 @router.post(path="", response_model=BusinessTrip, tags=["business_trips"])
 @api_handler
-async def create_business_trip(data: CreateBusinessTrip):
+async def create_business_trip(data: CreateBusinessTrip = Depends(valid_employee_business_trip)):
     """Returns created with the given data business trip."""
 
     business_trip: models.BusinessTrip = await SqlAlchemyRepository(db_manager.get_session,

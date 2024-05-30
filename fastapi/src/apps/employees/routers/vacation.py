@@ -3,7 +3,8 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, Request
 
 from src.apps.employees import models
-from src.apps.employees.dependencies import valid_vacation_id, valid_vacation_reason_id, valid_vacation_type_id
+from src.apps.employees.dependencies import valid_vacation_id, valid_vacation_reason_id, valid_vacation_type_id, \
+    valid_employee_business_trip, valid_employee_vacation
 from src.apps.employees.schemas.vacation import Vacation, VacationType, VacationReason, CreateVacationType, \
     CreateVacationReason, CreateVacation, UpdateVacationType, UpdateVacationReason, UpdateVacation
 from src.apps.employees.transformers.vacation import VacationTypeTransformer, VacationReasonTransformer, \
@@ -141,7 +142,7 @@ async def update_vacation_by_id(data: UpdateVacation, vacation: models.Vacation 
 
 @router.post(path="", response_model=Vacation, tags=["vacation"])
 @api_handler
-async def create_vacation(data: CreateVacation):
+async def create_vacation(data: CreateVacation = Depends(valid_employee_vacation)):
     """Returns created with the given data vacation."""
 
     vacation: models.Vacation = await SqlAlchemyRepository(db_manager.get_session,
