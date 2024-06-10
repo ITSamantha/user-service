@@ -34,6 +34,7 @@ class VacationType(BaseSchemaModel):
 
 class CreateVacation(BaseSchemaModel):
     vacation_type_id: int
+    vacation_reason_id: int
 
     employee_id: int
 
@@ -42,20 +43,15 @@ class CreateVacation(BaseSchemaModel):
 
     comment: Optional[str] = None
 
-    vacation_reason_id: int
-
 
 class UpdateVacation(BaseSchemaModel):
-    vacation_type_id: Optional[int]
+    vacation_type_id: int
+    vacation_reason_id: int
 
-    employee_id: Optional[int]
+    start_date: datetime.date
+    end_date: datetime.date
 
-    start_date: Optional[datetime.date]
-    end_date: Optional[datetime.date]
-
-    comment: Optional[str]
-
-    vacation_reason_id: Optional[int]
+    comment: Optional[str] = None
 
 
 class Vacation(BaseResponseSchemaModel):

@@ -36,21 +36,23 @@ class SqlAlchemyRepository(AbstractRepository, Generic[ModelType, CreateSchemaTy
             await session.commit()
             return objects
 
-    async def update(self, data: UpdateSchemaType, exclude_none=True, exclude_unset=True, **filters) -> ModelType:
+    async def update(self, data: UpdateSchemaType, exclude_none=False, exclude_unset=False, **filters) -> ModelType:
         async with self._session_factory() as session:
-            instance_data = data.model_dump(exclude_unset=exclude_unset, exclude_defaults=True)
+            instance_data = data.model_dump(exclude_unset=exclude_unset, exclude_none=exclude_none)
             stmt = update(self.model).values(
                 **instance_data).filter_by(
                 **filters).returning(
                 self.model)
             res = await session.execute(stmt)
+            res = res.unique()
             await session.commit()
             return res.scalar_one()
 
-    async def delete(self, **filters) -> None:
+    async def delete(self, **filters) -> bool:
         async with self._session_factory() as session:
             await session.execute(delete(self.model).filter_by(**filters))
             await session.commit()
+            return True
 
     async def get_single(self, **filters) -> Optional[Type[Base]]:
         async with self._session_factory() as session:  # type: AsyncSession

@@ -11,4 +11,3 @@ router: APIRouter = APIRouter(
 router.include_router(vacation_router)
 router.include_router(business_trips_router)
 router.include_router(employee_router)
-

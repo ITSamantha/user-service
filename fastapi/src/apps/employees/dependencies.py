@@ -1,8 +1,10 @@
 from src.apps.employees import models
 from src.apps.employees.schemas.business_trip import CreateBusinessTrip
 from src.apps.employees.schemas.vacation import CreateVacation
-from src.core.dependencies import valid_id, valid_dates
+from src.core.dependencies import valid_id, valid_dates, is_deleted_model
 from src.utils.handlers import api_handler
+
+"""VACATION"""
 
 
 @api_handler
@@ -11,13 +13,24 @@ async def valid_vacation_id(vacation_id: int) -> models.Vacation:
 
 
 @api_handler
+async def existing_vacation(vacation_id: int) -> models.Vacation:
+    return await is_deleted_model(vacation_id, models.Vacation, "Vacation")
+
+
+"""VACATION REASON"""
+
+
+@api_handler
 async def valid_vacation_reason_id(vacation_reason_id: int) -> models.VacationReason:
     return await valid_id(vacation_reason_id, models.VacationReason, "Vacation reason")
 
 
+"""VACATION TYPE"""
+
+
 @api_handler
 async def valid_vacation_type_id(vacation_type_id: int) -> models.VacationType:
-    return await valid_id(vacation_type_id, models.VacationReason, "Vacation type")
+    return await valid_id(vacation_type_id, models.VacationType, "Vacation type")
 
 
 @api_handler
@@ -35,9 +48,17 @@ async def valid_employee_position_id(employee_position_id: int) -> models.Employ
     return await valid_id(employee_position_id, models.EmployeePosition, "Employee position")
 
 
+"""BUSINESS TRIP"""
+
+
 @api_handler
 async def valid_business_trip_id(business_trip_id: int) -> models.BusinessTrip:
     return await valid_id(business_trip_id, models.BusinessTrip, "Business trip")
+
+
+@api_handler
+async def existing_business_trip(business_trip_id: int) -> models.BusinessTrip:
+    return await is_deleted_model(business_trip_id, models.BusinessTrip, "Business trip")
 
 
 @api_handler

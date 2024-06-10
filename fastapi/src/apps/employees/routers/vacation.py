@@ -4,12 +4,13 @@ from fastapi import APIRouter, Depends, Request
 
 from src.apps.employees import models
 from src.apps.employees.dependencies import valid_vacation_id, valid_vacation_reason_id, valid_vacation_type_id, \
-    valid_employee_business_trip, valid_employee_vacation
+    valid_employee_vacation, existing_vacation
 from src.apps.employees.schemas.vacation import Vacation, VacationType, VacationReason, CreateVacationType, \
     CreateVacationReason, CreateVacation, UpdateVacationType, UpdateVacationReason, UpdateVacation
 from src.apps.employees.transformers.vacation import VacationTypeTransformer, VacationReasonTransformer, \
     VacationTransformer
 from src.core.database.session_manager import db_manager
+from src.core.schemas.base import BaseDeleteSchema
 from src.utils.handlers import api_handler
 from src.utils.repository.crud.base_crud_repository import SqlAlchemyRepository
 from src.utils.transformer import transform
@@ -62,6 +63,16 @@ async def update_vacation_type_by_id(data: UpdateVacationType,
     return transform(vacation_type, VacationTypeTransformer())
 
 
+@router.delete(path="/types/{vacation_type_id}", response_model=VacationType, tags=["vacation_types"])
+@api_handler
+async def delete_vacation_type(
+        vacation_type: models.VacationType = Depends(valid_vacation_type_id)) -> VacationType:
+    """Returns deleted vacation reason."""
+
+    await SqlAlchemyRepository(db_manager.get_session, model=models.Vacation).delete(id=vacation_type.id)
+    return transform(vacation_type, VacationTypeTransformer())
+
+
 """ VACATION REASON """
 
 
@@ -105,6 +116,16 @@ async def create_vacation_reason(data: CreateVacationReason):
     return transform(vacation_reason, VacationReasonTransformer())
 
 
+@router.delete(path="/reasons/{vacation_reason_id}", response_model=VacationReason, tags=["vacation_reasons"])
+@api_handler
+async def delete_vacation_reason(
+        vacation_reason: models.VacationReason = Depends(valid_vacation_reason_id)) -> VacationReason:
+    """Returns deleted vacation reason."""
+
+    await SqlAlchemyRepository(db_manager.get_session, model=models.Vacation).delete(id=vacation_reason.id)
+    return transform(vacation_reason, VacationReasonTransformer())
+
+
 """ VACATION """
 
 
@@ -126,17 +147,16 @@ async def get_vacation_by_id(vacation: Vacation = Depends(valid_vacation_id)):
     return transform(vacation, VacationTransformer().include(["employee", "vacation_type", "vacation_reason"]))
 
 
-# TODO: ДИАНА ДОДЕЛАТЬ
 @router.patch(path="/{vacation_id}", response_model=Vacation, tags=["vacation"])
 @api_handler
-async def update_vacation_by_id(data: UpdateVacation, vacation: models.Vacation = Depends(valid_vacation_id)):
+async def update_vacation_by_id(data: UpdateVacation,
+                                vacation: models.Vacation = Depends(existing_vacation)) -> Vacation:
     """Returns updated with given data vacation."""
 
     vacation: models.Vacation = await SqlAlchemyRepository(db_manager.get_session,
-                                                           model=models.Vacation).update(data=data,
-                                                                                         exclude_unset=True,
-                                                                                         exclude_none=False,
-                                                                                         id=vacation.id)
+                                                           model=models.Vacation).update(
+        data=data,
+        id=vacation.id)
     return transform(vacation, VacationTransformer().include(["vacation_type", "vacation_reason"]))
 
 
@@ -148,3 +168,15 @@ async def create_vacation(data: CreateVacation = Depends(valid_employee_vacation
     vacation: models.Vacation = await SqlAlchemyRepository(db_manager.get_session,
                                                            model=models.Vacation).create(data=data)
     return transform(vacation, VacationTransformer().include(["vacation_type", "vacation_reason"]))
+
+
+@router.delete(path="/{vacation_id}", response_model=Vacation, tags=["vacation"])
+@api_handler
+async def delete_vacation(vacation: models.Vacation = Depends(existing_vacation)) -> Vacation:
+    """Returns deleted vacation."""
+
+    vacation: models.Vacation = await SqlAlchemyRepository(db_manager.get_session,
+                                                           model=models.Vacation).update(
+        data=BaseDeleteSchema(),
+        id=vacation.id)
+    return transform(vacation, VacationTransformer())

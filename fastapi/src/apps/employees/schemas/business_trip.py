@@ -18,7 +18,14 @@ class CreateBusinessTrip(BaseSchemaModel):
 
 
 class UpdateBusinessTrip(BaseSchemaModel):
-    pass
+    start_date: datetime.date
+    end_date: datetime.date
+
+    purpose: str
+
+    destination: str
+
+    comment: Optional[str] = None
 
 
 class BusinessTrip(BaseResponseSchemaModel):

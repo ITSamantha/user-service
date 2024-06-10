@@ -26,8 +26,8 @@ class CreateUnit(BaseSchemaModel):
 
 
 class UpdateUnit(BaseSchemaModel):
-    # TODO: change
-    title: Optional[str] = None
+    title: str
+
     director_id: Optional[int] = None
 
 
@@ -53,15 +53,16 @@ class CreateEmployee(BaseSchemaModel):
 
 
 class UpdateEmployee(BaseSchemaModel):
-    pass
-
-
-class SearchEmployee(BaseSchemaModel):
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
+    last_name: str
+    first_name: str
     patronymic: Optional[str] = None
-    email: Optional[EmailStr] = None
-    login: Optional[str] = None
+
+    login: str
+
+    email: EmailStr
+
+    unit_id: int
+    position_id: int
 
 
 class Employee(BaseResponseSchemaModel):

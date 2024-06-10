@@ -10,7 +10,7 @@ from src.core.database.session_manager import db_manager
 from src.utils.repository.crud.base_crud_repository import SqlAlchemyRepository, ModelType
 
 
-async def valid_id(model_id: int, model: Type[ModelType], model_name: str):
+async def valid_id(model_id: int, model: Type[ModelType], model_name: str = "The model"):
     """Returns object of given model with given id if exists."""
 
     instance: model = await SqlAlchemyRepository(db_manager.get_session,
@@ -32,3 +32,14 @@ async def valid_dates(data: Union[CreateBusinessTrip, CreateVacation]):
         raise Exception(str(e))
 
     return data
+
+
+async def is_deleted_model(model_id: int, model: Type[ModelType], model_name: str = "The model"):
+    """Returns object of given model with given id if exists and not deleted."""
+
+    instance: model = await valid_id(model_id, model, model_name)
+
+    if instance.deleted_at:
+        raise Exception(f"{model_name} with this data has already been deleted.")
+
+    return instance

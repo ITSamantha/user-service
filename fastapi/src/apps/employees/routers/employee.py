@@ -5,10 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.apps.employees import models
 from src.apps.employees.dependencies import valid_employee_position_id, valid_employee_id, valid_unit_id
+from src.apps.employees.repository.employee_repository import EmployeeRepository
 from src.apps.employees.schemas.business_trip import BusinessTrip
 
 from src.apps.employees.schemas.employee import CreateEmployee, CreateEmployeePosition, EmployeePosition, Employee, \
-    Unit, CreateUnit, SearchEmployee, UpdateEmployeePosition, UpdateUnit, UpdateEmployee
+    Unit, CreateUnit, UpdateEmployeePosition, UpdateUnit, UpdateEmployee
 from src.apps.employees.schemas.vacation import Vacation
 from src.apps.employees.transformers.business_trip import BusinessTripTransformer
 from src.apps.employees.transformers.employee import EmployeePositionTransformer, UnitTransformer, EmployeeTransformer
@@ -26,7 +27,6 @@ router: APIRouter = APIRouter(
 """ EMPLOYEE POSITION """
 
 
-# TODO: ДИАНА УБЕРИ ИЛИ РАЗБЕРИСЬ
 @router.get(path="/positions", response_model=List[EmployeePosition], tags=["employee_positions"])
 @api_handler
 async def get_employee_positions():
@@ -122,18 +122,24 @@ async def update_unit_by_id(data: UpdateUnit,
 async def get_employees():
     """Returns the list of employees."""
 
-    employees: List[models.Employee] = await SqlAlchemyRepository(db_manager.get_session,
-                                                                  model=models.Employee).get_multi(unique=True)
+    employees: List[models.Employee] = await EmployeeRepository(db_manager.get_session,
+                                                                model=models.Employee).get_multi(unique=True)
     return transform(employees, EmployeeTransformer().include(["unit"]))
 
 
 @router.get(path="/search", response_model=List[Employee], tags=["employees"])
 @api_handler
-async def search_employees(data: SearchEmployee):
+async def search_employees(first_name: str = None, last_name: str = None, patronymic: str = None, login: str = None,
+                           email: str = None):
     """Returns the list of employees."""
-    info = data.model_dump(exclude_unset=True)
-    employees: List[models.Employee] = await SqlAlchemyRepository(db_manager.get_session,
-                                                                  model=models.Employee).get_multi(unique=True)
+
+    employees: List[models.Employee] = await EmployeeRepository(db_manager.get_session,
+                                                                model=models.Employee).search(first_name=first_name,
+                                                                                              last_name=last_name,
+                                                                                              patronymic=patronymic,
+                                                                                              login=login,
+                                                                                              email=email,
+                                                                                              unique=True)
     return transform(employees, EmployeeTransformer().include(["unit"]))
 
 
@@ -150,8 +156,8 @@ async def get_employee_by_id(employee: Employee = Depends(valid_employee_id)):
 async def create_employee(data: CreateEmployee):
     """Returns created with the given data employee."""
 
-    employee: models.Employee = await SqlAlchemyRepository(db_manager.get_session,
-                                                           model=models.Employee).create(data)
+    employee: models.Employee = await EmployeeRepository(db_manager.get_session,
+                                                         model=models.Employee).create(data)
     return transform(employee, EmployeeTransformer())
 
 
@@ -161,8 +167,8 @@ async def update_employee_by_id(data: UpdateEmployee,
                                 employee: models.Employee = Depends(valid_employee_id)):
     """Returns updated with given data employee."""
 
-    employee: models.Employee = await SqlAlchemyRepository(db_manager.get_session,
-                                                           model=models.Employee).update(
+    employee: models.Employee = await EmployeeRepository(db_manager.get_session,
+                                                         model=models.Employee).update(
         data=data,
         id=employee.id)
     return transform(employee, EmployeeTransformer())
