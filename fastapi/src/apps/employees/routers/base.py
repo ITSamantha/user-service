@@ -5,8 +5,7 @@ from src.apps.employees.routers.vacation import router as vacation_router
 from src.apps.employees.routers.business_trip import router as business_trips_router
 
 router: APIRouter = APIRouter(
-    prefix="/employees",
-    tags=["employees"],
+    prefix="/employees"
 )
 router.include_router(vacation_router)
 router.include_router(business_trips_router)

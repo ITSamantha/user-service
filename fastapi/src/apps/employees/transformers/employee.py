@@ -24,11 +24,10 @@ class EmployeeTransformer(BaseTransformer):
         self.available_includes = [
             "unit",
             "vacations",
-            "business_trips"
-        ]
-        self.default_includes = [
+            "business_trips",
             "position"
         ]
+        self.default_includes = []
 
     def transform(self, employee: models.Employee):
         return Employee(

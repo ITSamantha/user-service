@@ -27,7 +27,6 @@ class VacationType(Base):
 class Employee(Base):
     __tablename__ = "employees"
 
-    # todo: read about table args
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
     last_name: Mapped[str] = mapped_column(String(128), nullable=False)
@@ -38,11 +37,11 @@ class Employee(Base):
     password: Mapped[str] = mapped_column(String(64), nullable=False)
     email: Mapped[str] = mapped_column(String(128), nullable=False, unique=True)
 
-    unit_id: Mapped[int] = mapped_column(ForeignKey("units.id"), nullable=False)
+    unit_id: Mapped[int] = mapped_column(ForeignKey("units.id", ondelete="SET NULL"), nullable=True)
     unit: Mapped["Unit"] = relationship(uselist=False, foreign_keys=[unit_id],
                                         back_populates="employees", lazy="joined")
 
-    position_id: Mapped[int] = mapped_column(ForeignKey("employee_positions.id"), nullable=False)
+    position_id: Mapped[int] = mapped_column(ForeignKey("employee_positions.id", ondelete="SET NULL"), nullable=True)
     position: Mapped["EmployeePosition"] = relationship(uselist=False, lazy="subquery")
 
     vacations: Mapped[List["Vacation"]] = relationship(uselist=True, lazy="subquery")  # TODO: CHECK
@@ -78,7 +77,7 @@ class Vacation(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
-    vacation_type_id: Mapped[int] = mapped_column(ForeignKey("vacation_types.id"), nullable=False)
+    vacation_type_id: Mapped[int] = mapped_column(ForeignKey("vacation_types.id", ondelete="SET NULL"), nullable=True)
     vacation_type: Mapped[VacationType] = relationship(uselist=False, lazy="joined")
 
     employee_id: Mapped[int] = mapped_column(ForeignKey("employees.id"), nullable=False)
@@ -87,7 +86,8 @@ class Vacation(Base):
     start_date: Mapped[datetime.date] = mapped_column(nullable=False)
     end_date: Mapped[datetime.date] = mapped_column(nullable=False)
 
-    vacation_reason_id: Mapped[int] = mapped_column(ForeignKey("vacation_reasons.id"), nullable=False)
+    vacation_reason_id: Mapped[int] = mapped_column(ForeignKey("vacation_reasons.id", ondelete="SET NULL"),
+                                                    nullable=True)
     vacation_reason: Mapped[VacationReason] = relationship(uselist=False, lazy="joined")
 
     comment: Mapped[Optional[str]] = mapped_column(String, nullable=True)

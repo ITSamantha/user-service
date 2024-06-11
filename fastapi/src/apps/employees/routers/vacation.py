@@ -69,7 +69,7 @@ async def delete_vacation_type(
         vacation_type: models.VacationType = Depends(valid_vacation_type_id)) -> VacationType:
     """Returns deleted vacation reason."""
 
-    await SqlAlchemyRepository(db_manager.get_session, model=models.Vacation).delete(id=vacation_type.id)
+    await SqlAlchemyRepository(db_manager.get_session, model=models.VacationType).delete(id=vacation_type.id)
     return transform(vacation_type, VacationTypeTransformer())
 
 
@@ -122,7 +122,7 @@ async def delete_vacation_reason(
         vacation_reason: models.VacationReason = Depends(valid_vacation_reason_id)) -> VacationReason:
     """Returns deleted vacation reason."""
 
-    await SqlAlchemyRepository(db_manager.get_session, model=models.Vacation).delete(id=vacation_reason.id)
+    await SqlAlchemyRepository(db_manager.get_session, model=models.VacationReason).delete(id=vacation_reason.id)
     return transform(vacation_reason, VacationReasonTransformer())
 
 
