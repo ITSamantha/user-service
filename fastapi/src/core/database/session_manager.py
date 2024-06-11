@@ -19,17 +19,11 @@ class DatabaseSessionManager:
         self.engine: Optional[AsyncEngine] = None
         self.session_factory: Optional[AsyncSession] = None
 
-    def initialize(self) -> None:
-
-        connect_args = {
-            "statement_cache_size": 0,
-            "prepared_statement_cache_size": 0,
-        }
+    def initialize(self, prod: bool = False) -> None:
 
         self.engine = create_async_engine(
-            url=settings_db.database_url,
+            url=settings_db.database_url if prod else settings_db.test_database_url,
             pool_pre_ping=True,
-            connect_args=connect_args,
             echo=settings_db.POSTGRES_ECHO
         )
 

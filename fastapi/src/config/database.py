@@ -17,12 +17,18 @@ class ConfigDatabase(BaseSettings):
     POSTGRES_NAME: str
     POSTGRES_ECHO: bool
 
+    DB_TEST_URL: str
+
     @property
     def database_url(self) -> Optional[PostgresDsn]:
         return (
             f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@"
             f"{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_NAME}"
         )
+
+    @property
+    def test_database_url(self):
+        return self.DB_TEST_URL
 
     class Config:
         env_file = ".env"
