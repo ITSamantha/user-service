@@ -2,7 +2,7 @@ import pytest
 from httpx import AsyncClient
 
 from src.apps.employees.schemas.employee import CreateEmployee, CreateEmployeePosition, UpdateEmployeePosition, \
-    UpdateEmployee
+    UpdateEmployee, CreateUnit
 from tests.conftest import app, async_client, event_loop, setup_and_teardown_db
 
 """EMPLOYEE POSITIONS"""
@@ -60,6 +60,50 @@ async def test_delete_employee_positions(anyio_backend, async_client: AsyncClien
     assert len(response.json()) == 1
 
 
+"""UNIT"""
+
+
+@pytest.mark.parametrize('anyio_backend', ['asyncio'])
+async def test_get_units(anyio_backend, async_client: AsyncClient):
+    response = await async_client.get("/employees/units")
+    assert response.status_code == 200
+    assert len(response.json()) == 0
+
+
+@pytest.mark.parametrize('anyio_backend', ['asyncio'])
+async def test_work_units(anyio_backend, async_client: AsyncClient):
+    instance: dict = CreateUnit(title="Отдел менеджмента",
+                                director_id=None).model_dump()
+    response = await async_client.post("/employees/units", json=instance)
+    assert response.status_code == 200
+
+    response = await async_client.get("/employees/units")
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+
+    instance: dict = CreateUnit(title="Отдел менеджмента",
+                                director_id=None).model_dump()
+
+    response = await async_client.post("/employees/units", json=instance)
+    assert response.status_code == 500
+
+    response = await async_client.get("/employees/units")
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+
+    instance: dict = CreateUnit(title="Отдел разработки",
+                                director_id=None).model_dump()
+    response = await async_client.post("/employees/units", json=instance)
+    assert response.status_code == 200
+
+    instance: dict = CreateUnit(title="Отдел разработки ПО",
+                                director_id=None).model_dump()
+
+    response = await async_client.patch("/employees/units/2", json=instance)
+    assert response.status_code == 200
+    assert response.json()["title"] == "Отдел разработки ПО"
+
+
 """EMPLOYEE"""
 
 
@@ -109,7 +153,7 @@ async def test_work_employees(anyio_backend, async_client: AsyncClient):
                                     login="popovpop",
                                     password="qwerty222222",
                                     email="popovpop@gmail.com",
-                                    unit_id=1,
+                                    unit_id=2,
                                     position_id=2).model_dump()
     response = await async_client.patch("/employees/1", json=instance)
     assert response.status_code == 200

@@ -59,7 +59,7 @@ class Unit(Base):
     title: Mapped[str] = mapped_column(String(256), nullable=False, unique=True)
 
     director_id: Mapped[Optional[int]] = mapped_column(ForeignKey("employees.id", name="fk_unit_director_id"),
-                                                       nullable=False)
+                                                       nullable=True)
     director: Mapped[Optional["Employee"]] = relationship(uselist=False, foreign_keys=[director_id], lazy="joined")
 
     employees: Mapped[List["Employee"]] = relationship(uselist=True, foreign_keys=[Employee.unit_id], lazy="joined")

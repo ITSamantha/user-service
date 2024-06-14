@@ -157,7 +157,7 @@ async def update_vacation_by_id(data: UpdateVacation,
                                                            model=models.Vacation).update(
         data=data,
         id=vacation.id)
-    return transform(vacation, VacationTransformer().include(["vacation_type", "vacation_reason"]))
+    return transform(vacation, VacationTransformer())
 
 
 @router.post(path="", response_model=Vacation, tags=["vacation"])

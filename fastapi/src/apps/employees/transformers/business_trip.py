@@ -17,6 +17,7 @@ class BusinessTripTransformer(BaseTransformer):
             start_date=business_trip.start_date,
             end_date=business_trip.end_date,
             purpose=business_trip.purpose,
+            comment=business_trip.comment,
             destination=business_trip.destination,
             created_at=business_trip.created_at,
             updated_at=business_trip.updated_at,
