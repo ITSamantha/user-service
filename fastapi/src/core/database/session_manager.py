@@ -56,4 +56,4 @@ class DatabaseSessionManager:
 
 
 db_manager = DatabaseSessionManager()
-db_manager.initialize()
+db_manager.initialize(prod=True)

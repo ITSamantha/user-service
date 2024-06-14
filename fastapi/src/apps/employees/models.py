@@ -1,7 +1,7 @@
 import datetime
 from typing import List, Optional
 
-from sqlalchemy import Integer, ForeignKey, String, CheckConstraint
+from sqlalchemy import Integer, ForeignKey, String, CheckConstraint, ForeignKeyConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.database.base import Base
@@ -37,7 +37,8 @@ class Employee(Base):
     password: Mapped[str] = mapped_column(String(64), nullable=False)
     email: Mapped[str] = mapped_column(String(128), nullable=False, unique=True)
 
-    unit_id: Mapped[int] = mapped_column(ForeignKey("units.id", ondelete="SET NULL"), nullable=True)
+    unit_id: Mapped[int] = mapped_column(ForeignKey("units.id", ondelete="SET NULL", name="fk_employee_unit_id"),
+                                         nullable=True)
     unit: Mapped["Unit"] = relationship(uselist=False, foreign_keys=[unit_id],
                                         back_populates="employees", lazy="joined")
 
@@ -53,13 +54,15 @@ class Employee(Base):
     deleted_at: Mapped[Optional[datetime.datetime]] = mapped_column(nullable=True)
 
 
+
 class Unit(Base):
     __tablename__ = "units"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, nullable=False)
     title: Mapped[str] = mapped_column(String(256), nullable=False, unique=True)
 
-    director_id: Mapped[Optional[int]] = mapped_column(ForeignKey("employees.id"), nullable=True)
+    director_id: Mapped[Optional[int]] = mapped_column(ForeignKey("employees.id", name="fk_unit_director_id"),
+                                                       nullable=False)
     director: Mapped[Optional["Employee"]] = relationship(uselist=False, foreign_keys=[director_id], lazy="joined")
 
     employees: Mapped[List["Employee"]] = relationship(uselist=True, foreign_keys=[Employee.unit_id], lazy="joined")

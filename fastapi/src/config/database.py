@@ -37,3 +37,4 @@ class ConfigDatabase(BaseSettings):
 
 
 settings_db = ConfigDatabase()
+
