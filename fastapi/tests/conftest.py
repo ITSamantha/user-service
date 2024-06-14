@@ -27,13 +27,6 @@ def event_loop():
 
 
 @pytest.fixture(scope="session", autouse=True)
-def setup_db():
-    db_manager.initialize(prod=False)
-    yield
-    db_manager.initialize(prod=True)
-
-
-@pytest.fixture(scope="session", autouse=True)
 def setup_and_teardown_db():
     async def _create_tables():
         try:
@@ -48,17 +41,19 @@ def setup_and_teardown_db():
             async with db_manager.engine.begin() as conn:
                 await conn.run_sync(Base.metadata.drop_all)
                 print("Tables dropped successfully")
-            os.remove("test.db")  # TODO: CHANGE
 
+            os.remove("test.db")  # TODO: CHANGE
             print("Database dropped successfully")
         except Exception as e:
             print(f"Error dropping tables: {e}")
 
+    db_manager.initialize(prod=False)
     asyncio.run(_create_tables())
 
     yield
 
     asyncio.run(_drop_tables())
+    db_manager.initialize(prod=True)
 
 
 @pytest.fixture(scope="function")

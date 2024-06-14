@@ -36,12 +36,10 @@ class Employee(Base):
     login: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(64), nullable=False)
     email: Mapped[str] = mapped_column(String(128), nullable=False, unique=True)
-
     unit_id: Mapped[int] = mapped_column(ForeignKey("units.id", ondelete="SET NULL", name="fk_employee_unit_id"),
                                          nullable=True)
     unit: Mapped["Unit"] = relationship(uselist=False, foreign_keys=[unit_id],
                                         back_populates="employees", lazy="joined")
-
     position_id: Mapped[int] = mapped_column(ForeignKey("employee_positions.id", ondelete="SET NULL"), nullable=True)
     position: Mapped["EmployeePosition"] = relationship(uselist=False, lazy="subquery")
 

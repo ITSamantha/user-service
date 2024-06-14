@@ -3,7 +3,7 @@ from httpx import AsyncClient
 
 from src.apps.employees.schemas.employee import CreateEmployee, CreateEmployeePosition, UpdateEmployeePosition, \
     UpdateEmployee
-from tests.conftest import app, async_client, event_loop, setup_db, setup_and_teardown_db
+from tests.conftest import app, async_client, event_loop, setup_and_teardown_db
 
 """EMPLOYEE POSITIONS"""
 
