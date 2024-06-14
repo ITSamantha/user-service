@@ -17,9 +17,11 @@ config = context.config
 
 section = config.config_ini_section
 config.set_section_option(section, "POSTGRES_USER", settings_db.POSTGRES_USER)
+print(settings_db.POSTGRES_USER)
 config.set_section_option(section, "POSTGRES_HOST", settings_db.POSTGRES_HOST)
 config.set_section_option(section, "POSTGRES_PASSWORD", settings_db.POSTGRES_PASSWORD)
 config.set_section_option(section, "POSTGRES_NAME", settings_db.POSTGRES_NAME)
+print(settings_db.POSTGRES_NAME)
 config.set_section_option(section, "POSTGRES_PORT", settings_db.POSTGRES_PORT)
 
 # Interpret the config file for Python logging.

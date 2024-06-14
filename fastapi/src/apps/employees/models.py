@@ -54,7 +54,6 @@ class Employee(Base):
     deleted_at: Mapped[Optional[datetime.datetime]] = mapped_column(nullable=True)
 
 
-
 class Unit(Base):
     __tablename__ = "units"
 
