@@ -5,5 +5,4 @@ __pycache__/
 *$py.class
 .env
 .pytest_cache
-alembic.ini
 .coverage
