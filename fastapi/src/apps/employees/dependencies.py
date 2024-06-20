@@ -1,7 +1,10 @@
+from typing import TypeVar
+
 from src.apps.employees import models
-from src.apps.employees.schemas.business_trip import CreateBusinessTrip
-from src.apps.employees.schemas.vacation import CreateVacation
+from src.apps.employees.schemas.business_trip import CreateBusinessTrip, UpdateBusinessTrip
+from src.apps.employees.schemas.vacation import CreateVacation, UpdateVacation
 from src.core.dependencies import valid_id, valid_dates, is_deleted_model
+from src.core.schemas.base import BaseSchemaModel
 from src.utils.handlers import api_handler
 
 """VACATION"""
@@ -47,12 +50,12 @@ async def existing_employee(employee_id: int) -> models.Employee:
 
 
 @api_handler
-async def valid_employee_business_trip(data: CreateBusinessTrip):
+async def valid_employee_business_trip(data: CreateBusinessTrip | UpdateBusinessTrip):
     return await valid_dates(data)
 
 
 @api_handler
-async def valid_employee_vacation(data: CreateVacation):
+async def valid_employee_vacation(data: CreateVacation | UpdateVacation):
     return await valid_dates(data)
 
 

@@ -51,9 +51,9 @@ async def create_business_trip(data: CreateBusinessTrip = Depends(valid_employee
 
 @router.patch(path="/{business_trip_id}", response_model=BusinessTrip, tags=["business_trips"])
 @api_handler
-async def update_business_trip_by_id(data: UpdateBusinessTrip,
-                                     business_trip: models.BusinessTrip = Depends(
-                                         existing_business_trip)) -> BusinessTrip:
+async def update_business_trip_by_id(business_trip: models.BusinessTrip = Depends(
+    existing_business_trip), data: UpdateBusinessTrip = Depends(valid_employee_business_trip)
+) -> BusinessTrip:
     """Returns updated with given data business trip."""
 
     business_trip: models.BusinessTrip = await SqlAlchemyRepository(db_manager.get_session,

@@ -1,6 +1,8 @@
 import datetime
 from typing import Optional
 
+from pydantic import Field
+
 from src.core.schemas.base import BaseSchemaModel, BaseResponseSchemaModel
 
 
@@ -10,22 +12,22 @@ class CreateBusinessTrip(BaseSchemaModel):
     start_date: datetime.date
     end_date: datetime.date
 
-    purpose: str
+    purpose: str = Field(min_length=2)
 
-    destination: str
+    destination: str = Field(min_length=2)
 
-    comment: Optional[str] = None
+    comment: Optional[str] = Field(min_length=2, default=None)
 
 
 class UpdateBusinessTrip(BaseSchemaModel):
     start_date: datetime.date
     end_date: datetime.date
 
-    purpose: str
+    purpose: str = Field(min_length=2)
 
-    destination: str
+    destination: str = Field(min_length=2)
 
-    comment: Optional[str] = None
+    comment: Optional[str] = Field(min_length=2, default=None)
 
 
 class BusinessTrip(BaseResponseSchemaModel):

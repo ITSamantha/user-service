@@ -7,7 +7,7 @@ from src.core.schemas.base import BaseSchemaModel, BaseResponseSchemaModel
 
 
 class CreateEmployeePosition(BaseSchemaModel):
-    title: str = Field(max_length=256)
+    title: str = Field(max_length=256, min_length=2)
 
 
 class UpdateEmployeePosition(CreateEmployeePosition):
@@ -20,15 +20,13 @@ class EmployeePosition(BaseResponseSchemaModel):
 
 
 class CreateUnit(BaseSchemaModel):
-    title: str
+    title: str = Field(min_length=2)
 
     director_id: Optional[int] = None
 
 
-class UpdateUnit(BaseSchemaModel):
-    title: str
-
-    director_id: Optional[int] = None
+class UpdateUnit(CreateUnit):
+    pass
 
 
 class Unit(BaseResponseSchemaModel):
@@ -40,11 +38,11 @@ class Unit(BaseResponseSchemaModel):
 
 
 class CreateEmployee(BaseSchemaModel):
-    last_name: str = Field()
-    first_name: str
-    patronymic: Optional[str] = None
+    last_name: str = Field(min_length=2)
+    first_name: str = Field(min_length=1)
+    patronymic: Optional[str] = Field(min_length=1, default=None)
 
-    login: str
+    login: str = Field(min_length=8)
     password: str = Field(max_length=16, min_length=8)
     email: EmailStr
 
@@ -53,11 +51,11 @@ class CreateEmployee(BaseSchemaModel):
 
 
 class UpdateEmployee(BaseSchemaModel):
-    last_name: str
-    first_name: str
-    patronymic: Optional[str] = None
+    last_name: str = Field(min_length=2)
+    first_name: str = Field(min_length=1)
+    patronymic: Optional[str] = Field(min_length=1, default=None)
 
-    login: str
+    login: str = Field(min_length=8)
 
     email: EmailStr
 

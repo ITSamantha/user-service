@@ -5,10 +5,9 @@ from src.apps.employees import models
 from src.apps.employees.schemas.business_trip import CreateBusinessTrip
 from src.apps.employees.schemas.vacation import CreateVacation
 from src.core.database.session_manager import db_manager
-from src.utils.repository.crud.base_crud_repository import SqlAlchemyRepository
+from src.utils.repository.crud.base_crud_repository import SqlAlchemyRepository, CreateSchemaType, UpdateSchemaType
 
 
-# TODO: REMOVE DUPLICATES
 async def check_business_trips_valid_dates(data: Union[CreateBusinessTrip, CreateVacation]):
     employee_business_trips: List[models.BusinessTrip] = await SqlAlchemyRepository(db_manager.get_session,
                                                                                     model=models.BusinessTrip).get_multi(
@@ -26,7 +25,9 @@ async def check_business_trips_valid_dates(data: Union[CreateBusinessTrip, Creat
                 f"crosses with the given data from {data.start_date} to {data.end_date}.")
 
 
-async def check_vacations_valid_dates(data: Union[CreateBusinessTrip, CreateVacation]):
+# TODO: EXCLUDE WHILE UPDATE THE SAME ID
+
+async def check_vacations_valid_dates(data: CreateSchemaType | UpdateSchemaType):
     employee_vacations: List[models.Vacation] = await SqlAlchemyRepository(db_manager.get_session,
                                                                            model=models.Vacation).get_multi(
         employee_id=data.employee_id, unique=True)

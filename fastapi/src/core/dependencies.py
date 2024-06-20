@@ -1,13 +1,12 @@
-from typing import Type, Union
+from typing import Type, TypeVar
 
-from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from src.apps.employees.schemas.business_trip import CreateBusinessTrip
-from src.apps.employees.schemas.vacation import CreateVacation
 from src.apps.employees.utils.utils import check_business_trips_valid_dates, check_vacations_valid_dates
 from src.core.database.session_manager import db_manager
+from src.core.schemas.base import BaseSchemaModel
 from src.utils.repository.crud.base_crud_repository import SqlAlchemyRepository, ModelType
+
+CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseSchemaModel)
+UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseSchemaModel)
 
 
 async def valid_id(model_id: int, model: Type[ModelType], model_name: str = "The model"):
@@ -22,7 +21,7 @@ async def valid_id(model_id: int, model: Type[ModelType], model_name: str = "The
     return instance
 
 
-async def valid_dates(data: Union[CreateBusinessTrip, CreateVacation]):
+async def valid_dates(data: CreateSchemaType | UpdateSchemaType, object_id: int = None):
     """Returns schema with validated dates."""
 
     try:

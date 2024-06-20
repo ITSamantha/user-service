@@ -149,8 +149,9 @@ async def get_vacation_by_id(vacation: Vacation = Depends(valid_vacation_id)):
 
 @router.patch(path="/{vacation_id}", response_model=Vacation, tags=["vacation"])
 @api_handler
-async def update_vacation_by_id(data: UpdateVacation,
-                                vacation: models.Vacation = Depends(existing_vacation)) -> Vacation:
+async def update_vacation_by_id(vacation: models.Vacation = Depends(existing_vacation),
+                                data: UpdateVacation = Depends(valid_employee_vacation),
+                                ) -> Vacation:
     """Returns updated with given data vacation."""
 
     vacation: models.Vacation = await SqlAlchemyRepository(db_manager.get_session,
