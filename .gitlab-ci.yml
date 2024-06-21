@@ -1,0 +1,32 @@
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  DOCKER_IMAGE: registry.gitlab.com/saveleva/user-service:latest
+
+before_script:
+  - python -m pip install --upgrade pip
+
+test:
+  stage: test
+  image: python:3.9
+  script:
+    - pip install -r fastapi/requirements/test.txt
+    - pytest
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $DOCKER_IMAGE .
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+    - docker push $DOCKER_IMAGE
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploy stage - add your deployment scripts/commands here"
