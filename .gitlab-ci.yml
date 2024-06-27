@@ -13,8 +13,8 @@ test:
   stage: test
   image: python:3.9
   script:
-    - pip install -r fastapi/requirements/test.txt
-    - pytest
+    - pip install -r fastapi/requirements/base.txt
+    - pytest fastapi/tests/employees/employee.py
 
 build:
   stage: build
