@@ -16,9 +16,9 @@ build:
   script:
     - docker compose -f docker/test/docker-compose.yml down
     - docker compose -f docker/test/docker-compose.yml build
-    - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN
     - docker images
-    - docker tag test-fastapi $IMAGE_BASE
+    - docker tag test-fastapi:latest $IMAGE
     - docker images
     - docker push $IMAGE
 
