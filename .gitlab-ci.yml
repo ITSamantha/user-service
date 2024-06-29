@@ -19,7 +19,7 @@ build:
     - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker tag test-fastapi:latest $IMAGE
     - docker images
-    - docker push DOCKER_IMAGE
+    - docker push $DOCKER_IMAGE
 
 test:
   stage: test
