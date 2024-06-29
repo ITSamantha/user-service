@@ -5,7 +5,7 @@ stages:
 
 variables:
   IMAGE_BASE: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME
-  IMAGE: $IMAGE_BASE
+  IMAGE: $IMAGE_BASE:latest
 
 
 build:
@@ -15,7 +15,7 @@ build:
     - docker compose -f docker/test/docker-compose.yml down
     - docker compose -f docker/test/docker-compose.yml build
     - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker tag test-fastapi:latest $IMAGE
+    # - docker tag test-fastapi:latest $IMAGE
     - docker push $IMAGE
 
 test:
