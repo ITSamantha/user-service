@@ -13,7 +13,7 @@ requirements:
   image: python:3.10
   script:
     - pip install -r fastapi/requirements/test.txt
-    - - echo "Всё хорошо 1"
+    - echo "Всё хорошо 1"
 
 
 
