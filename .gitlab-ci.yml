@@ -9,7 +9,7 @@ variables:
 
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
-  - docker tag user_service_image:latest $IMAGE
+
 
 build:
   stage: build
@@ -17,6 +17,7 @@ build:
   script:
     - docker compose -f docker/test/docker-compose.yml down
     - docker compose -f docker/test/docker-compose.yml build
+    - docker tag user_service_image:latest $IMAGE
     - docker push $IMAGE
 
 test:
