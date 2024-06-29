@@ -20,10 +20,14 @@ build:
 
 test:
   stage: test
+  script:
+    - echo "Всё хорошо"
 
 
 
 
 deploy:
   stage: deploy
+  script:
+    - echo "Всё хорошо"
 
