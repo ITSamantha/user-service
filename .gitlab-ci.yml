@@ -12,18 +12,16 @@ build:
   script:
     - docker compose -f docker/test/docker-compose.yml down
     - docker compose -f docker/test/docker-compose.yml build
-    - docker compose -f docker/test/docker-compose.yml up
-    - echo "Всё хорошо 2"
+    - docker compose -f docker/test/docker-compose.yml up -d
 
 
 
 
 test:
   stage: test
+  image: python:3.10
   script:
-    - echo "Всё хорошо 3"
-
-
+    - pytest tests/employees/employee.py
 
 
 deploy:
