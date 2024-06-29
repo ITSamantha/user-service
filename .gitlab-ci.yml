@@ -16,20 +16,14 @@ build:
     - docker build -t $DOCKER_IMAGE .
     - echo "Всё хорошо"
 
-  only:
-    main
 
 
 test:
   stage: test
 
-  only:
-    main
 
 
 
 deploy:
   stage: deploy
 
-  only:
-    main
