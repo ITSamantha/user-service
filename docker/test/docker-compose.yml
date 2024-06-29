@@ -5,8 +5,8 @@ services:
     container_name: userservice_fastapi
     restart: unless-stopped
     build:
-      context: ../fastapi/../../.
-      dockerfile: ./fastapi/Dockerfile
+      context: ../../fastapi
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     volumes:
