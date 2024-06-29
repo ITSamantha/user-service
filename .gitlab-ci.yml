@@ -13,12 +13,10 @@ before_script:
 build:
   stage: build
   image: docker:latest
-
-
   script:
     - docker compose -f docker/test/docker-compose.yml down
     - docker compose -f docker/test/docker-compose.yml build
-    - docker push $CI_REGISTRY_IMAGE
+    - docker push $IMAGE
 
 test:
   stage: test
