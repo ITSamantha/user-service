@@ -4,25 +4,15 @@ stages:
   - deploy
 
 
-variables:
-  DOCKER_IMAGE: registry.gitlab.com/saveleva/user-service:latest
-
-
-requirements:
-  stage: build
-  image: python:3.10
-  script:
-    - pip install -r fastapi/requirements/test.txt
-    - echo "Всё хорошо 1"
-
-
 
 build:
   stage: build
   image: docker:latest
 
   script:
-    - docker build -t $DOCKER_IMAGE .
+    - docker compose -t docker/test/docker-compose.yml down
+    - docker compose -t docker/test/docker-compose.yml build
+    - docker compose -t docker/test/docker-compose.yml up
     - echo "Всё хорошо 2"
 
 
