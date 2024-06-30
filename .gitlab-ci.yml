@@ -23,6 +23,7 @@ build:
     - docker push $IMAGE
 
 
+
 test:
   stage: test
   image: docker:latest
