@@ -1,14 +1,13 @@
 stages:
   - build
   - test
-  - deploy
+  # - deploy
 
 variables:
   IMAGE_BASE: $DOCKER_HUB_USERNAME/$CI_PROJECT_NAME
   IMAGE: $IMAGE_BASE:latest
 
-before_script:
-  - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+
 
 build:
   stage: build
@@ -18,7 +17,7 @@ build:
   script:
     - docker compose -f docker/test/docker-compose.yml down
     - docker compose -f docker/test/docker-compose.yml build
-    # - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+    - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
     - docker tag test-fastapi:latest $IMAGE
     - docker push $IMAGE
 
@@ -28,11 +27,13 @@ test:
   services:
     - docker:dind
   script:
+    - docker ps
+    - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
     - docker pull $IMAGE
-    # - docker tag $IMAGE test-fastapi:latest
+    - docker tag $IMAGE test-fastapi:latest
     - docker compose -f docker/test/docker-compose.yml up -d
     - export CONTAINER_ID=$(docker-compose ps -q web)
-    - until [ "`docker inspect -f  $CONTAINER_ID`"=="true" ]; do sleep 0.1; done;
+    - echo $CONTAINER_ID
     - docker exec --tty $CONTAINER_ID pytest
     # - docker exec --tty $CONTAINER_ID pytest #tests/employees/employee.py
     # - docker exec --tty $CONTAINER_ID pytest #tests/employees/vacation.py
@@ -42,4 +43,4 @@ test:
 deploy:
   stage: deploy
   script:
-    - echo "Всё хорошо 4"
+    - echo "deploy stage"
