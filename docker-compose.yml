@@ -23,8 +23,6 @@ services:
     image: postgres:14
     ports:
       - "5432:5432"
-    env_file:
-      - ./pgsql/.env
     volumes:
       - userservice-pgsql-volume:/var/lib/postgresql/data
     healthcheck:
