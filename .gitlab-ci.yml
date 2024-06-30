@@ -30,7 +30,6 @@ test:
     - docker tag $IMAGE test-fastapi:latest
     - docker compose -f docker/test/docker-compose.yml up -d
     - export CONTAINER_ID=$(docker ps --filter "name=userservice_fastapi" --format "{{.ID}}")
-    - docker exec --tty $CONTAINER_ID pytest
     - docker exec --tty $CONTAINER_ID pytest tests/employees/employee.py
     - docker exec --tty $CONTAINER_ID pytest tests/employees/vacation.py
     - docker exec --tty $CONTAINER_ID pytest tests/employees/business_trip.py
