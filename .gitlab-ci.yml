@@ -19,6 +19,7 @@ build:
     - docker tag test-fastapi:latest $IMAGE
     - docker push $IMAGE
 
+
 test:
   stage: test
   image: docker:latest
