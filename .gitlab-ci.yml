@@ -22,7 +22,6 @@ build:
     - docker images
     - docker push $IMAGE
 
-
 test:
   stage: test
   image: python:3.10
