@@ -31,6 +31,8 @@ test:
     - docker ps
     - until [ "`docker inspect -f  $CONTAINER_ID`"=="true" ]; do sleep 0.1; done;
     - docker exec --tty $CONTAINER_ID pytest tests/employees/employee.py
+    - docker exec --tty $CONTAINER_ID pytest tests/employees/vacation.py
+    - docker exec --tty $CONTAINER_ID pytest tests/employees/business_trip.py
   allow_failure: false
 
 deploy:
