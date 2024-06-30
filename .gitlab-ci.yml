@@ -16,7 +16,7 @@ build:
     - docker compose -f docker/test/docker-compose.yml down
     - docker compose -f docker/test/docker-compose.yml build
     - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-    # - docker tag test-fastapi:latest $IMAGE
+    - docker tag test-fastapi:latest $IMAGE
     - docker push $IMAGE
 
 test:
