@@ -23,12 +23,13 @@ async def valid_id(model_id: int, model: Type[ModelType], model_name: str = "The
     return instance
 
 
-async def valid_dates(data: CreateSchemaType | UpdateSchemaType, object_id: int = None):
+async def valid_dates(data: CreateSchemaType | UpdateSchemaType, employee_id: int, object_id: int = None):
     """Returns schema with validated dates."""
 
     try:
-        await check_vacations_valid_dates(data, object_id=object_id if isinstance(data, UpdateVacation) else None)
-        await check_business_trips_valid_dates(data,
+        await check_vacations_valid_dates(data, employee_id=employee_id,
+                                          object_id=object_id if isinstance(data, UpdateVacation) else None)
+        await check_business_trips_valid_dates(data, employee_id=employee_id,
                                                object_id=object_id if isinstance(data, UpdateBusinessTrip) else None)
     except Exception as e:
         raise Exception(str(e))
