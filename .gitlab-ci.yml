@@ -9,7 +9,7 @@ variables:
 
 before_script:
   - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-  -
+
 build:
   stage: build
   image: docker:latest
