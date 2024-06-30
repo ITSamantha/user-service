@@ -50,13 +50,13 @@ async def existing_employee(employee_id: int) -> models.Employee:
 
 
 @api_handler
-async def valid_employee_business_trip(data: CreateBusinessTrip | UpdateBusinessTrip):
-    return await valid_dates(data)
+async def valid_employee_business_trip(data: CreateBusinessTrip | UpdateBusinessTrip, business_trip_id: int = None):
+    return await valid_dates(data, object_id=business_trip_id)
 
 
 @api_handler
-async def valid_employee_vacation(data: CreateVacation | UpdateVacation):
-    return await valid_dates(data)
+async def valid_employee_vacation(data: CreateVacation | UpdateVacation, vacation_id: int = None):
+    return await valid_dates(data, object_id=vacation_id)
 
 
 """UNIT"""

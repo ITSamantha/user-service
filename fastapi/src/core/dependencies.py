@@ -1,5 +1,7 @@
 from typing import Type, TypeVar
 
+from src.apps.employees.schemas.business_trip import UpdateBusinessTrip
+from src.apps.employees.schemas.vacation import UpdateVacation
 from src.apps.employees.utils.utils import check_business_trips_valid_dates, check_vacations_valid_dates
 from src.core.database.session_manager import db_manager
 from src.core.schemas.base import BaseSchemaModel
@@ -25,8 +27,9 @@ async def valid_dates(data: CreateSchemaType | UpdateSchemaType, object_id: int 
     """Returns schema with validated dates."""
 
     try:
-        await check_vacations_valid_dates(data)
-        await check_business_trips_valid_dates(data)
+        await check_vacations_valid_dates(data, object_id=object_id if isinstance(data, UpdateVacation) else None)
+        await check_business_trips_valid_dates(data,
+                                               object_id=object_id if isinstance(data, UpdateBusinessTrip) else None)
     except Exception as e:
         raise Exception(str(e))
 
