@@ -17,7 +17,7 @@ build:
     - docker compose -f docker/test/docker-compose.yml down
     - docker compose -f docker/test/docker-compose.yml build
     - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-    - docker tag test-fastapi:latest $IMAGE
+    # - docker tag test-fastapi:latest $IMAGE
     - docker push $IMAGE
 
 test:
@@ -26,7 +26,7 @@ test:
   services:
     - docker:dind
   script:
-    - docker compose -f docker/test/docker-compose.yml up -d
+    - docker compose up -d
     - export CONTAINER_ID=$(docker compose ps -q web)
     - docker ps
     - until [ "`docker inspect -f  $CONTAINER_ID`"=="true" ]; do sleep 0.1; done;
