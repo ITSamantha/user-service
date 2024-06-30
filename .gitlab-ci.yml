@@ -34,7 +34,7 @@ test:
     - docker ps
     - docker exec $CONTAINER_ID pytest #tests/employees/employee.py
     - docker exec $CONTAINER_ID pytest #tests/employees/vacation.py
-    - docker exec $CONTAINER_ID pytest #tests/employees/business_trip.p
+    - docker exec --tty $CONTAINER_ID pytest #tests/employees/business_trip.p
   allow_failure: false
 
 deploy:
