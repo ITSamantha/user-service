@@ -30,8 +30,9 @@ test:
     - docker pull $IMAGE
     - docker tag $IMAGE test-fastapi:latest
     - docker compose -f docker/test/docker-compose.yml up -d
-    - docker compose ps
-    - export CONTAINER_ID=$(docker compose ps -q fastapi)
+    - docker ps
+    - export CONTAINER_ID=$(docker compose ps -q userservice_fastapi)
+    - docker ps
     - echo $CONTAINER_ID
     - docker exec --tty $CONTAINER_ID pytest
     # - docker exec --tty $CONTAINER_ID pytest #tests/employees/employee.py
