@@ -32,9 +32,9 @@ test:
     - docker compose -f docker/test/docker-compose.yml up -d
     - export CONTAINER_ID=$(docker compose ps -q web)
     - docker ps
-    - docker exec $CONTAINER_ID pytest tests/employees/employee.py
-    - docker exec $CONTAINER_ID pytest tests/employees/vacation.py
-    - docker exec $CONTAINER_ID pytest tests/employees/business_trip.p
+    - docker exec $CONTAINER_ID pytest #tests/employees/employee.py
+    - docker exec $CONTAINER_ID pytest #tests/employees/vacation.py
+    - docker exec $CONTAINER_ID pytest #tests/employees/business_trip.p
   allow_failure: false
 
 deploy:
