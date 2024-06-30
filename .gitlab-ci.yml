@@ -17,14 +17,12 @@ build:
     - docker compose -f docker/test/docker-compose.yml down
     - docker compose -f docker/test/docker-compose.yml build
     - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-    - docker images
     - docker tag test-fastapi:latest $IMAGE
-    - docker images
     - docker push $IMAGE
 
 test:
   stage: test
-  image: python:3.10
+  image: docker:latest
   services:
     - docker:dind
   script:
