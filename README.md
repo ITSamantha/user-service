@@ -1,4 +1,4 @@
-# Задание
+# Задание 1
 Цель: Написать сервис хранения сотрудников компании(user-service)
 
 Сервис нужно написать на FastAPI с БД postgres + тесты для него.
@@ -33,3 +33,10 @@ https://docs.pytest.org/en/7.1.x/getting-started.html
 4. pydentic - типизация(опционально)
 https://docs.pydantic.dev/latest/
 ```
+
+# Задание 2
+Цель: Для user-service написать Dockerfile и docker-compose.yaml файлы.
+
+## Требования к запуску сервиса
+   - Сервис с БД запускается в контейнере одной командой 
+   ```docker compose up```
