@@ -38,6 +38,4 @@ https://docs.pydantic.dev/latest/
 Цель: Для user-service написать Dockerfile и docker-compose.yaml файлы.
 
 ## Требования к запуску сервиса
-   - Сервис с БД запускается в контейнере одной командой 
-   
-   ```docker compose up```
+   - Сервис с БД запускается в контейнере одной командой ```docker compose up```
