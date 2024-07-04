@@ -16,7 +16,7 @@ build:
     - docker compose -f docker/test/docker-compose.yml down
     - docker compose -f docker/test/docker-compose.yml build
     - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-    - docker tag test-fastapi:latest $IMAGE
+    - docker tag test-user_service:latest $IMAGE
     - docker push $IMAGE
 
 test:
@@ -27,7 +27,7 @@ test:
   script:
     - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
     - docker pull $IMAGE
-    - docker tag $IMAGE test-fastapi:latest
+    - docker tag $IMAGE test-user_service:latest
     - docker compose -f docker/test/docker-compose.yml up -d
     - export CONTAINER_ID=$(docker ps --filter "name=userservice_fastapi" --format "{{.ID}}")
     - docker exec --tty $CONTAINER_ID pytest tests/employees/employee.py

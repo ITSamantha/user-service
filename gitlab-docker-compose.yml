@@ -14,6 +14,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    env_file:
+      - $user_env
     networks:
       - userservice
 
@@ -27,6 +29,8 @@ services:
       - "8000:8000"
     volumes:
       - ./task_service:/app
+    env_file:
+      - $task_env
     depends_on:
       postgres:
         condition: service_healthy
@@ -59,3 +63,6 @@ networks:
 volumes:
   pgsql-volume:
     driver: local
+
+
+
