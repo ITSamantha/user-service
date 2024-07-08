@@ -7,11 +7,10 @@ from sqlalchemy import pool
 from alembic import context
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-"""
 from src.config.database import settings_db
-from src.apps.employees.models import *
+from src.apps.tasks.models import *
 from src.core.database.base import Base
-"""
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
