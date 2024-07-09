@@ -1,7 +1,6 @@
-from typing import List, Union
+from typing import List
 
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.apps.employees import models
 from src.apps.employees.dependencies import valid_employee_position_id, valid_employee_id, valid_unit_id, \

@@ -28,8 +28,6 @@ async def check_business_trips_valid_dates(data: Union[CreateBusinessTrip, Creat
                 f"crosses with the given data from {data.start_date} to {data.end_date}.")
 
 
-# TODO: EXCLUDE WHILE UPDATE THE SAME ID
-
 async def check_vacations_valid_dates(data: CreateSchemaType | UpdateSchemaType, employee_id: int,
                                       object_id: int = None):
     employee_vacations: List[models.Vacation] = await SqlAlchemyRepository(db_manager.get_session,

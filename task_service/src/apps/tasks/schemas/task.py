@@ -30,8 +30,11 @@ class CreateTask(BaseSchemaModel):
     project_id: int
 
 
-class UpdateTask(CreateTask):
-    pass
+class UpdateTask(BaseSchemaModel):
+    title: str = Field(min_length=1, max_length=128)
+    description: Optional[str] = Field(default=None, min_length=1)
+
+    project_id: int
 
 
 class AssignEmployeeTask(BaseSchemaModel):
