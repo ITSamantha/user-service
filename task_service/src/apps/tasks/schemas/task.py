@@ -39,3 +39,7 @@ class UpdateTask(BaseSchemaModel):
 
 class AssignEmployeeTask(BaseSchemaModel):
     assigned_employee_id: Optional[int] = Field(default=None)
+
+
+class AssignableEmployee(BaseResponseSchemaModel):
+    is_employee_assignable: bool

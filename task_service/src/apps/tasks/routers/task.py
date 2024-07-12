@@ -1,10 +1,13 @@
+import os
 from typing import List
 
+import requests
+from dotenv import load_dotenv
 from fastapi import APIRouter, Depends
 
 from src.apps.tasks import models
 from src.apps.tasks.dependencies import valid_task_id, existing_task, existing_project
-from src.apps.tasks.schemas.task import Task, CreateTask, UpdateTask, AssignEmployeeTask
+from src.apps.tasks.schemas.task import Task, CreateTask, UpdateTask, AssignEmployeeTask, AssignableEmployee
 from src.apps.tasks.transformers.task import TaskTransformer
 from src.core.database.session_manager import db_manager
 from src.core.schemas.base import BaseDeleteSchema
@@ -83,10 +86,36 @@ async def delete_task(task: models.Task = Depends(existing_task)) -> Task:
 async def assign_task(data: AssignEmployeeTask, task: models.Task = Depends(existing_task)) -> Task:
     """Returns updated with assignment task."""
 
+    params = {
+        "director_id": 1
+    }
+
+    load_dotenv()
+    if data.assigned_employee_id:
+        host: str = os.getenv("USERSERVICE_HOST")
+        port: str = os.getenv("USERSERVICE_PORT")
+
+        error_detail = ("Условия назначения сотрудника не выполнены. "
+                        "Возможно, вы пытаетесь назначить сотрудника не своего отдела на задачу.")
+        try:
+            response = requests.get(f'http://{host}:{port}/employees/{data.assigned_employee_id}/assignable',
+                                    params=params)
+        except Exception as e:
+            raise Exception("Произошла ошибка.")
+
+        response_data = response.json()
+
+        if response.status_code == 200:
+
+            is_employee_assignable: bool = response_data["is_employee_assignable"]
+
+            if not is_employee_assignable:
+                raise Exception(error_detail)
+        else:
+            raise Exception(response_data["detail"])
+
     task: models.Task = await SqlAlchemyRepository(db_manager.get_session,
                                                    model=models.Task).update(
         data=data,
         id=task.id)
     return transform(task, TaskTransformer())
-
-# TODO: add assign employee
