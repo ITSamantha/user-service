@@ -16,12 +16,12 @@ class Project(Base):
 
     title: Mapped[str] = mapped_column(String(128), nullable=False, index=True, unique=True)
 
-    tasks: Mapped[Task] = relationship("Task", back_populates="project")
-
     created_at: Mapped[datetime.datetime] = mapped_column(nullable=False, default=datetime.datetime.now())
     updated_at: Mapped[datetime.datetime] = mapped_column(nullable=False, default=datetime.datetime.now(),
                                                           onupdate=datetime.datetime.now())
     deleted_at: Mapped[Optional[datetime.datetime]] = mapped_column(nullable=True)
+
+    tasks: Mapped[Task] = relationship("Task", back_populates="project")
 
 
 class Task(Base):
