@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import datetime
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy import Integer, String, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -21,7 +21,7 @@ class Project(Base):
                                                           onupdate=datetime.datetime.now())
     deleted_at: Mapped[Optional[datetime.datetime]] = mapped_column(nullable=True)
 
-    tasks: Mapped[Task] = relationship("Task", back_populates="project")
+    tasks: Mapped[List[Task]] = relationship("Task", back_populates="project", lazy="selectin", uselist=True)
 
 
 class Task(Base):

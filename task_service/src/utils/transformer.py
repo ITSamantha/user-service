@@ -30,6 +30,8 @@ class BaseTransformer(ABC):
         return transformer.transform_with_includes(data)
 
     def collection(self, data, transformer):
+        if data is None:
+            return None
         return [self.item(el, transformer) for el in data]
 
 

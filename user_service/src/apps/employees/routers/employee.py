@@ -173,6 +173,18 @@ async def get_employee_by_id(employee: Employee = Depends(valid_employee_id)):
     return transform(employee, EmployeeTransformer().include(["unit", "vacations", "business_trips", "position"]))
 
 
+@router.get(path="/{employee_id}/assignable", response_model=bool, tags=["employees"])
+@api_handler
+async def is_employee_assignable(director_id: int, employee: Employee = Depends(valid_employee_id)):
+    """Returns employee with employee_id."""
+
+    employee: Employee = transform(employee, EmployeeTransformer().include(["unit"]))
+
+    director: Employee = transform(await valid_employee_id(director_id), EmployeeTransformer().include(["unit"]))
+
+    return employee.unit.id == director.unit.id and director.unit.director_id == director.id
+
+
 @router.post(path="/", response_model=Employee, tags=["employees"])
 @api_handler
 async def create_employee(data: CreateEmployee):

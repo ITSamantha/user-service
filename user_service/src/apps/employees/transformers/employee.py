@@ -67,7 +67,8 @@ class UnitTransformer(BaseTransformer):
     def transform(self, unit: models.Unit):
         return Unit(
             id=unit.id,
-            title=unit.title
+            title=unit.title,
+            director_id=unit.director_id
         )
 
     def include_employees(self, unit: models.Unit):

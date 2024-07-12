@@ -32,6 +32,7 @@ class UpdateUnit(CreateUnit):
 class Unit(BaseResponseSchemaModel):
     id: int
     title: str
+    director_id: Optional[int]
 
     # director: Optional["Employee"] = Field( default=None)
     # employees: Optional[List["Employee"]] = Field(exclude=True, default=None)

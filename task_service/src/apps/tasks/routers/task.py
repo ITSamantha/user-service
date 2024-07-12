@@ -3,8 +3,8 @@ from typing import List
 from fastapi import APIRouter, Depends
 
 from src.apps.tasks import models
-from src.apps.tasks.dependencies import valid_task_id, existing_task
-from src.apps.tasks.schemas.task import Task, CreateTask, UpdateTask
+from src.apps.tasks.dependencies import valid_task_id, existing_task, existing_project
+from src.apps.tasks.schemas.task import Task, CreateTask, UpdateTask, AssignEmployeeTask
 from src.apps.tasks.transformers.task import TaskTransformer
 from src.core.database.session_manager import db_manager
 from src.core.schemas.base import BaseDeleteSchema
@@ -43,15 +43,21 @@ async def get_task_by_id(task: models.Task = Depends(valid_task_id)):
 async def create_task(data: CreateTask):
     """Returns created with the given data task."""
 
+    # TODO: CHECK EXISTENCE OF PROJECT
+
+    await existing_project(project_id=data.project_id)
+
     task: models.Task = await SqlAlchemyRepository(db_manager.get_session,
                                                    model=models.Task).create(data=data)
     return transform(task, TaskTransformer())
 
 
-@router.patch(path="/{task_id}", response_model=Task, tags=["task"])
+@router.patch(path="/{task_id}", response_model=Task, tags=["tasks"])
 @api_handler
 async def update_task_by_id(task_id: int, data: UpdateTask) -> Task:
     """Returns updated with given data task."""
+
+    # await existing_project(project_id=data.project_id)
 
     task: models.Task = await SqlAlchemyRepository(db_manager.get_session,
                                                    model=models.Task).update(
@@ -60,7 +66,7 @@ async def update_task_by_id(task_id: int, data: UpdateTask) -> Task:
     return transform(task, TaskTransformer())
 
 
-@router.delete(path="/{task_id}", response_model=Task, tags=["task"])
+@router.delete(path="/{task_id}", response_model=Task, tags=["tasks"])
 @api_handler
 async def delete_task(task: models.Task = Depends(existing_task)) -> Task:
     """Returns deleted task."""
@@ -68,6 +74,18 @@ async def delete_task(task: models.Task = Depends(existing_task)) -> Task:
     task: models.Task = await SqlAlchemyRepository(db_manager.get_session,
                                                    model=models.Task).update(
         data=BaseDeleteSchema(),
+        id=task.id)
+    return transform(task, TaskTransformer())
+
+
+@router.patch(path="/{task_id}/assign", response_model=Task, tags=["tasks"])
+@api_handler
+async def assign_task(data: AssignEmployeeTask, task: models.Task = Depends(existing_task)) -> Task:
+    """Returns updated with assignment task."""
+
+    task: models.Task = await SqlAlchemyRepository(db_manager.get_session,
+                                                   model=models.Task).update(
+        data=data,
         id=task.id)
     return transform(task, TaskTransformer())
 
