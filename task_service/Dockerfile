@@ -5,7 +5,7 @@ COPY . .
 COPY ./entrypoint.sh entrypoint.sh
 
 RUN apk update \
-    && apk add --no-cache \
+    && apk add \
            build-base \
            linux-headers \
            python3-dev \

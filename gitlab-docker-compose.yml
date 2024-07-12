@@ -26,7 +26,7 @@ services:
       context: ./task_service
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "9000:9000"
     volumes:
       - ./task_service:/app
     env_file:
@@ -45,6 +45,9 @@ services:
       - "5432:5432"
     volumes:
       - pgsql-volume:/var/lib/postgresql/data
+      - ./pgsql/pg-init-scripts:/docker-entrypoint-initdb.d
+    env_file:
+      - $postgres_env
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -d postgres -U postgres" ]
       interval: 10s

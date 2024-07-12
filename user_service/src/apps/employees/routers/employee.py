@@ -10,7 +10,7 @@ from src.apps.employees.repository.employee_repository import EmployeeRepository
 from src.apps.employees.schemas.business_trip import BusinessTrip
 
 from src.apps.employees.schemas.employee import CreateEmployee, CreateEmployeePosition, EmployeePosition, Employee, \
-    Unit, CreateUnit, UpdateEmployeePosition, UpdateUnit, UpdateEmployee
+    Unit, CreateUnit, UpdateEmployeePosition, UpdateUnit, UpdateEmployee, AssignableEmployee
 from src.apps.employees.schemas.vacation import Vacation
 from src.apps.employees.transformers.business_trip import BusinessTripTransformer
 from src.apps.employees.transformers.employee import EmployeePositionTransformer, UnitTransformer, EmployeeTransformer
@@ -173,7 +173,7 @@ async def get_employee_by_id(employee: Employee = Depends(valid_employee_id)):
     return transform(employee, EmployeeTransformer().include(["unit", "vacations", "business_trips", "position"]))
 
 
-@router.get(path="/{employee_id}/assignable", response_model=bool, tags=["employees"])
+@router.get(path="/{employee_id}/assignable", response_model=AssignableEmployee, tags=["employees"])
 @api_handler
 async def is_employee_assignable(director_id: int, employee: Employee = Depends(valid_employee_id)):
     """Returns employee with employee_id."""
@@ -182,7 +182,9 @@ async def is_employee_assignable(director_id: int, employee: Employee = Depends(
 
     director: Employee = transform(await valid_employee_id(director_id), EmployeeTransformer().include(["unit"]))
 
-    return employee.unit.id == director.unit.id and director.unit.director_id == director.id
+    is_assignable: bool = employee.unit.id == director.unit.id and director.unit.director_id == director.id
+
+    return AssignableEmployee(is_employee_assignable=is_assignable)
 
 
 @router.post(path="/", response_model=Employee, tags=["employees"])

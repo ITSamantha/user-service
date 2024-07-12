@@ -4,12 +4,12 @@ from fastapi import APIRouter, Depends
 
 from src.apps.tasks import models
 from src.apps.tasks.dependencies import valid_project_id, existing_project
+from src.apps.tasks.repository.project_repository import ProjectRepository
 from src.apps.tasks.schemas.project import Project, CreateProject, UpdateProject
 from src.apps.tasks.transformers.project import ProjectTransformer
 from src.core.database.session_manager import db_manager
 from src.core.schemas.base import BaseDeleteSchema
 from src.utils.handlers import api_handler
-from src.utils.repository.crud.base_crud_repository import SqlAlchemyRepository
 from src.utils.transformer import transform
 
 router: APIRouter = APIRouter(
@@ -25,8 +25,19 @@ router: APIRouter = APIRouter(
 async def get_projects():
     """Returns the list of all projects."""
 
-    projects: List[models.Project] = await SqlAlchemyRepository(db_manager.get_session,
-                                                                model=models.Project).get_multi()
+    projects: List[models.Project] = await ProjectRepository(db_manager.get_session,
+                                                             model=models.Project).get_multi()
+    return transform(projects, ProjectTransformer().include(["tasks"]))
+
+
+@router.get(path="/search", response_model=List[Project], tags=["projects", "search"])
+@api_handler
+async def search_projects(title: str = None) -> List[Project]:
+    """Returns the list of projects."""
+
+    projects: List[models.Project] = await ProjectRepository(db_manager.get_session,
+                                                             model=models.Project).search(title=title,
+                                                                                          unique=True)
     return transform(projects, ProjectTransformer().include(["tasks"]))
 
 
@@ -43,8 +54,8 @@ async def get_project_by_id(project: models.Project = Depends(valid_project_id))
 async def create_project(data: CreateProject):
     """Returns created with the given data project."""
 
-    project: models.Project = await SqlAlchemyRepository(db_manager.get_session,
-                                                         model=models.Project).create(data=data)
+    project: models.Project = await ProjectRepository(db_manager.get_session,
+                                                      model=models.Project).create(data=data)
     return transform(project, ProjectTransformer())
 
 
@@ -53,8 +64,8 @@ async def create_project(data: CreateProject):
 async def update_project_by_id(project_id: int, data: UpdateProject) -> Project:
     """Returns updated with given data project."""
 
-    project: models.Project = await SqlAlchemyRepository(db_manager.get_session,
-                                                         model=models.Project).update(
+    project: models.Project = await ProjectRepository(db_manager.get_session,
+                                                      model=models.Project).update(
         data=data,
         id=project_id)
     return transform(project, ProjectTransformer())
@@ -65,8 +76,8 @@ async def update_project_by_id(project_id: int, data: UpdateProject) -> Project:
 async def delete_project(project: models.Project = Depends(existing_project)) -> Project:
     """Returns deleted project."""
 
-    project: models.Project = await SqlAlchemyRepository(db_manager.get_session,
-                                                         model=models.Project).update(
+    project: models.Project = await ProjectRepository(db_manager.get_session,
+                                                      model=models.Project).update(
         data=BaseDeleteSchema(),
         id=project.id)
     return transform(project, ProjectTransformer())

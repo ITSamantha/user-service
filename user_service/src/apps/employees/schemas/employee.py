@@ -84,3 +84,7 @@ class Employee(BaseResponseSchemaModel):
     created_at: datetime.datetime
     updated_at: datetime.datetime
     deleted_at: Optional[datetime.datetime]
+
+
+class AssignableEmployee(BaseResponseSchemaModel):
+    is_employee_assignable: bool

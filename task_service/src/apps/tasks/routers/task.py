@@ -7,12 +7,12 @@ from fastapi import APIRouter, Depends
 
 from src.apps.tasks import models
 from src.apps.tasks.dependencies import valid_task_id, existing_task, existing_project
+from src.apps.tasks.repository.task_repository import TaskRepository
 from src.apps.tasks.schemas.task import Task, CreateTask, UpdateTask, AssignEmployeeTask, AssignableEmployee
 from src.apps.tasks.transformers.task import TaskTransformer
 from src.core.database.session_manager import db_manager
 from src.core.schemas.base import BaseDeleteSchema
 from src.utils.handlers import api_handler
-from src.utils.repository.crud.base_crud_repository import SqlAlchemyRepository
 from src.utils.transformer import transform
 
 router: APIRouter = APIRouter(
@@ -28,8 +28,20 @@ router: APIRouter = APIRouter(
 async def get_tasks():
     """Returns the list of all tasks."""
 
-    tasks: List[models.Task] = await SqlAlchemyRepository(db_manager.get_session,
-                                                          model=models.Task).get_multi()
+    tasks: List[models.Task] = await TaskRepository(db_manager.get_session,
+                                                    model=models.Task).get_multi()
+    return transform(tasks, TaskTransformer().include(["project"]))
+
+
+@router.get(path="/search", response_model=List[Task], tags=["tasks", "search"])
+@api_handler
+async def search_tasks(title: str = None, description: str = None) -> List[Task]:
+    """Returns the list of tasks."""
+
+    tasks: List[models.Task] = await TaskRepository(db_manager.get_session,
+                                                    model=models.Task).search(title=title,
+                                                                              description=description,
+                                                                              unique=True)
     return transform(tasks, TaskTransformer().include(["project"]))
 
 
@@ -50,8 +62,8 @@ async def create_task(data: CreateTask):
 
     await existing_project(project_id=data.project_id)
 
-    task: models.Task = await SqlAlchemyRepository(db_manager.get_session,
-                                                   model=models.Task).create(data=data)
+    task: models.Task = await TaskRepository(db_manager.get_session,
+                                             model=models.Task).create(data=data)
     return transform(task, TaskTransformer())
 
 
@@ -62,8 +74,8 @@ async def update_task_by_id(task_id: int, data: UpdateTask) -> Task:
 
     # await existing_project(project_id=data.project_id)
 
-    task: models.Task = await SqlAlchemyRepository(db_manager.get_session,
-                                                   model=models.Task).update(
+    task: models.Task = await TaskRepository(db_manager.get_session,
+                                             model=models.Task).update(
         data=data,
         id=task_id)
     return transform(task, TaskTransformer())
@@ -74,8 +86,8 @@ async def update_task_by_id(task_id: int, data: UpdateTask) -> Task:
 async def delete_task(task: models.Task = Depends(existing_task)) -> Task:
     """Returns deleted task."""
 
-    task: models.Task = await SqlAlchemyRepository(db_manager.get_session,
-                                                   model=models.Task).update(
+    task: models.Task = await TaskRepository(db_manager.get_session,
+                                             model=models.Task).update(
         data=BaseDeleteSchema(),
         id=task.id)
     return transform(task, TaskTransformer())
@@ -91,12 +103,11 @@ async def assign_task(data: AssignEmployeeTask, task: models.Task = Depends(exis
     }
 
     load_dotenv()
+
     if data.assigned_employee_id:
         host: str = os.getenv("USERSERVICE_HOST")
         port: str = os.getenv("USERSERVICE_PORT")
 
-        error_detail = ("Условия назначения сотрудника не выполнены. "
-                        "Возможно, вы пытаетесь назначить сотрудника не своего отдела на задачу.")
         try:
             response = requests.get(f'http://{host}:{port}/employees/{data.assigned_employee_id}/assignable',
                                     params=params)
@@ -110,12 +121,13 @@ async def assign_task(data: AssignEmployeeTask, task: models.Task = Depends(exis
             is_employee_assignable: bool = response_data["is_employee_assignable"]
 
             if not is_employee_assignable:
-                raise Exception(error_detail)
+                raise Exception("Условия назначения сотрудника не выполнены. "
+                                "Возможно, вы пытаетесь назначить сотрудника не своего отдела на задачу.")
         else:
             raise Exception(response_data["detail"])
 
-    task: models.Task = await SqlAlchemyRepository(db_manager.get_session,
-                                                   model=models.Task).update(
+    task: models.Task = await TaskRepository(db_manager.get_session,
+                                             model=models.Task).update(
         data=data,
         id=task.id)
     return transform(task, TaskTransformer())
