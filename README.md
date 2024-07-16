@@ -34,11 +34,15 @@ https://docs.pytest.org/en/7.1.x/getting-started.html
 https://docs.pydantic.dev/latest/
 ```
 
+
+
 # ✨Задание 2
 Цель: Для user-service написать Dockerfile и docker-compose.yaml файлы.
 
 ## Требования к запуску сервиса
    - Сервис с БД запускается в контейнере одной командой ```docker compose up```
+
+
 
 # ✨Задание 3
 Цель:  Проект опубликовать в GitLab. Настроить CI. Публикация в хранилище докера.
@@ -48,6 +52,8 @@ https://docs.pydantic.dev/latest/
    - Настроить автосборку проекта при коммите в удалённый репозиторий
    - Настроить автозапуск тестов при коммитах
    - Создание докер-образа, сборка и публикация его в репозитории.
+
+
 
 # ✨Задание 4
 Цель: Написание второго микро сервисного приложения на FastApi, который хранит задачи(task-service)
@@ -75,6 +81,8 @@ https://docs.pydantic.dev/latest/
    - Dockerfile
    - docker-compose.yml
    - gitlab-ci.yml
+
+
 
 # ✨Задание 5
 
