@@ -5,6 +5,25 @@ from pydantic import Field
 
 from src.core.schemas.base import BaseResponseSchemaModel, BaseSchemaModel
 
+""" TASK STATUS """
+
+
+class TaskStatus(BaseResponseSchemaModel):
+    id: int
+
+    title: str = Field(min_length=1, max_length=128)
+
+
+class CreateTaskStatus(BaseSchemaModel):
+    title: str = Field(min_length=1, max_length=128)
+
+
+class UpdateTaskStatus(CreateTaskStatus):
+    pass
+
+
+""" TASK """
+
 
 class Task(BaseResponseSchemaModel):
     id: int

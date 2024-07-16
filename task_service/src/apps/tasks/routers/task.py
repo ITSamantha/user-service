@@ -30,7 +30,7 @@ async def get_tasks():
 
     tasks: List[models.Task] = await TaskRepository(db_manager.get_session,
                                                     model=models.Task).get_multi()
-    return transform(tasks, TaskTransformer().include(["project"]))
+    return transform(tasks, TaskTransformer().include(["project", "task_status"]))
 
 
 @router.get(path="/search", response_model=List[Task], tags=["tasks", "search"])
@@ -42,7 +42,7 @@ async def search_tasks(title: str = None, description: str = None) -> List[Task]
                                                     model=models.Task).search(title=title,
                                                                               description=description,
                                                                               unique=True)
-    return transform(tasks, TaskTransformer().include(["project"]))
+    return transform(tasks, TaskTransformer().include(["project", "task_status"]))
 
 
 @router.get(path="/{task_id}", response_model=Task, tags=["tasks"])
@@ -50,7 +50,7 @@ async def search_tasks(title: str = None, description: str = None) -> List[Task]
 async def get_task_by_id(task: models.Task = Depends(valid_task_id)):
     """Returns task with id=task_id."""
 
-    return transform(task, TaskTransformer().include(["project"]))
+    return transform(task, TaskTransformer().include(["project", "task_status"]))
 
 
 @router.post(path="", response_model=Task, tags=["tasks"])
