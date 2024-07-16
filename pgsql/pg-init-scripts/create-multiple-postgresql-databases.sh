@@ -3,6 +3,8 @@
 set -e
 set -u
 
+echo "Initialization script started"
+
 function create_user_and_database() {
 	local database=$1
 	echo "  Creating user and database '$database'"
@@ -20,3 +22,5 @@ if [ -n "$POSTGRES_MULTIPLE_DATABASES" ]; then
 	done
 	echo "Multiple databases created"
 fi
+
+echo "Initialization script finished"
