@@ -37,6 +37,8 @@ https://docs.pydantic.dev/latest/
 
 <br>
 <br>
+
+
 # ✨Задание 2
 Цель: Для user-service написать Dockerfile и docker-compose.yaml файлы.
 
@@ -46,6 +48,7 @@ https://docs.pydantic.dev/latest/
 
 <br>
 <br>
+
 # ✨Задание 3
 Цель:  Проект опубликовать в GitLab. Настроить CI. Публикация в хранилище докера.
 
@@ -58,6 +61,7 @@ https://docs.pydantic.dev/latest/
 
 <br>
 <br>
+
 # ✨Задание 4
 Цель: Написание второго микро сервисного приложения на FastApi, который хранит задачи(task-service)
 
@@ -88,6 +92,7 @@ https://docs.pydantic.dev/latest/
 
 <br>
 <br>
+
 # ✨Задание 5
 
 Цель: Написать третий сервис(interface-service) на FastApi, который общается с первыми двумя и предоставляет API на языке GraphQL
