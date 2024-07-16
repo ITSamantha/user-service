@@ -58,8 +58,6 @@ async def get_task_by_id(task: models.Task = Depends(valid_task_id)):
 async def create_task(data: CreateTask):
     """Returns created with the given data task."""
 
-    # TODO: CHECK EXISTENCE OF PROJECT
-
     await existing_project(project_id=data.project_id)
 
     task: models.Task = await TaskRepository(db_manager.get_session,
