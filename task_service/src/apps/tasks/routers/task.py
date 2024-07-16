@@ -8,11 +8,12 @@ from fastapi import APIRouter, Depends
 from src.apps.tasks import models
 from src.apps.tasks.dependencies import valid_task_id, existing_task, existing_project
 from src.apps.tasks.repository.task_repository import TaskRepository
-from src.apps.tasks.schemas.task import Task, CreateTask, UpdateTask, AssignEmployeeTask, AssignableEmployee
-from src.apps.tasks.transformers.task import TaskTransformer
+from src.apps.tasks.schemas.task import Task, CreateTask, UpdateTask, AssignEmployeeTask, AssignableEmployee, TaskStatus
+from src.apps.tasks.transformers.task import TaskTransformer, TaskStatusTransformer
 from src.core.database.session_manager import db_manager
 from src.core.schemas.base import BaseDeleteSchema
 from src.utils.handlers import api_handler
+from src.utils.repository.crud.base_crud_repository import SqlAlchemyRepository
 from src.utils.transformer import transform
 
 router: APIRouter = APIRouter(
@@ -43,6 +44,16 @@ async def search_tasks(title: str = None, description: str = None) -> List[Task]
                                                                               description=description,
                                                                               unique=True)
     return transform(tasks, TaskTransformer().include(["project", "task_status"]))
+
+
+@router.get(path="/statuses", response_model=List[TaskStatus], tags=["tasks", "statuses"])
+@api_handler
+async def get_task_statuses() -> List[TaskStatus]:
+    """Returns the list of task statuses."""
+
+    task_statuses: List[models.TaskStatus] = await SqlAlchemyRepository(db_manager.get_session,
+                                                                        model=models.TaskStatus).get_multi()
+    return transform(task_statuses, TaskStatusTransformer())
 
 
 @router.get(path="/{task_id}", response_model=Task, tags=["tasks"])
